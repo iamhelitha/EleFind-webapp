@@ -1,26 +1,128 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ */
+/*  EleFind Design Tokens                                              */
+/* ------------------------------------------------------------------ */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Primary — deep forest greens */
+  --green-900: #1a3d2b;
+  --green-700: #2d6a4f;
+  --green-500: #40916c;
+  --green-300: #74c69d;
+  --green-100: #d8f3dc;
+
+  /* Accent — warm amber */
+  --amber-500: #f4a261;
+  --amber-300: #f7c59f;
+
+  /* Risk palette */
+  --risk-low: #52b788;
+  --risk-medium: #f4a261;
+  --risk-high: #e76f51;
+  --risk-critical: #9b2226;
+
+  /* Neutrals */
+  --background: #f8f9f4;
+  --foreground: #1a1a1a;
+  --muted: #6b7280;
+  --card-bg: #ffffff;
+  --card-border: #e5e7e0;
+
+  /* Font families (set by next/font in layout.tsx) */
+  --font-heading: var(--font-syne);
+  --font-body: var(--font-dm-sans);
 }
+
+/* ------------------------------------------------------------------ */
+/*  Tailwind v4 theme inline                                           */
+/* ------------------------------------------------------------------ */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+
+  --color-green-900: var(--green-900);
+  --color-green-700: var(--green-700);
+  --color-green-500: var(--green-500);
+  --color-green-300: var(--green-300);
+  --color-green-100: var(--green-100);
+
+  --color-amber-500: var(--amber-500);
+  --color-amber-300: var(--amber-300);
+
+  --color-risk-low: var(--risk-low);
+  --color-risk-medium: var(--risk-medium);
+  --color-risk-high: var(--risk-high);
+  --color-risk-critical: var(--risk-critical);
+
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+
+  --font-heading: var(--font-syne);
+  --font-body: var(--font-dm-sans);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+/* ------------------------------------------------------------------ */
+/*  Base                                                               */
+/* ------------------------------------------------------------------ */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "DM Sans", system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), "Syne", system-ui, sans-serif;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Leaflet overrides (prevent Tailwind's base from breaking tiles)     */
+/* ------------------------------------------------------------------ */
+
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.leaflet-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-container {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.leaflet-control-zoom a {
+  width: 30px !important;
+  height: 30px !important;
+  line-height: 30px !important;
+  font-size: 16px !important;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Utility animations                                                 */
+/* ------------------------------------------------------------------ */
+
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}
+
+@keyframes pulse-slow {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.6; }
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 2s ease-in-out infinite;
 }
