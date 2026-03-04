@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Radar } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 /**
  * Top navigation bar with responsive mobile menu.
@@ -26,7 +27,14 @@ export default function Navbar() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo / brand */}
         <Link href="/" className="flex items-center gap-2 group">
-          <Radar className="h-7 w-7 text-green-700 transition-transform group-hover:rotate-12" />
+          <Image
+            src="/brand/elefind-logo.png"
+            alt="EleFind logo"
+            width={28}
+            height={28}
+            className="rounded-sm"
+            priority
+          />
           <span className="font-heading text-xl font-bold tracking-tight text-green-900">
             EleFind
           </span>

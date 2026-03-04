@@ -98,6 +98,25 @@ export type DetectionStatus =
   | "done"
   | "error";
 
+/** A single item in the batch processing queue. */
+export interface BatchItem {
+  id: string;
+  file: File;
+  /** Object-URL preview (null for TIFF). */
+  previewUrl: string | null;
+  status: DetectionStatus;
+  result: DetectionResult | null;
+  errorMessage?: string;
+}
+
+/** SAHI parameters shared across a batch run. */
+export interface SahiParams {
+  confThreshold: number;
+  sliceSize: number;
+  overlapRatio: number;
+  iouThreshold: number;
+}
+
 /** Map filter state used in the sidebar controls. */
 export interface MapFilters {
   showDetections: boolean;

@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { Radar, Map, Users, Camera, ArrowRight, Activity } from "lucide-react";
+import Image from "next/image";
+import { Map, Users, Camera, ArrowRight, Activity, Radar } from "lucide-react";
 import Card from "@/components/ui/Card";
+import HeroMapSection from "@/components/home/HeroMapSection";
 
 /**
  * Landing page for EleFind.
  *
  * Sections:
- *  1. Hero — tagline + CTA buttons
+ *  1. Hero — text on left, interactive fading map on right (clickable → /map)
  *  2. Problem statement — human-elephant conflict in Sri Lanka
  *  3. Feature cards — Detect, Map, Contribute
  *  4. Stats counter (mock data for demo phase)
@@ -49,16 +51,28 @@ const STATS = [
 export default function Home() {
   return (
     <div className="animate-fade-in">
-      {/* ─── Hero ──────────────────────────────────────────────── */}
+      {/* ─── Hero with Map Background ────────────────────────── */}
       <section className="relative overflow-hidden bg-green-900 text-white">
-        {/* Decorative gradient orb */}
-        <div className="pointer-events-none absolute -top-32 -right-32 h-96 w-96 rounded-full bg-green-500/20 blur-3xl" />
+        {/* Map fills the right side, fades to green-900 on the left */}
+        <HeroMapSection />
 
-        <div className="mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-          <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-green-700/60 px-4 py-1.5 text-sm font-medium text-green-100">
-              <Radar className="h-4 w-4" />
-              AI-Powered Conservation Technology
+        {/* Text content overlaid on the left */}
+        <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
+          <div className="max-w-xl lg:max-w-2xl">
+            {/* Logo + pill */}
+            <div className="mb-5 flex items-center gap-3">
+              <Image
+                src="/brand/elefind-logo.png"
+                alt="EleFind logo"
+                width={44}
+                height={44}
+                className="rounded-lg drop-shadow-lg"
+                priority
+              />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-700/60 px-3.5 py-1 text-xs font-semibold tracking-wide text-green-100 backdrop-blur-sm">
+                <Radar className="h-3.5 w-3.5" />
+                AI-Powered Conservation
+              </span>
             </div>
 
             <h1 className="font-heading text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
@@ -67,7 +81,7 @@ export default function Home() {
               from the Sky
             </h1>
 
-            <p className="mt-6 text-lg leading-relaxed text-green-100/90 sm:text-xl">
+            <p className="mt-6 text-base leading-relaxed text-green-100/90 sm:text-lg lg:text-xl">
               EleFind uses YOLOv11 and SAHI slice-aided inference to detect
               elephants in aerial imagery, helping mitigate human-elephant
               conflict in Sri Lanka through better monitoring and spatial awareness.
@@ -76,14 +90,14 @@ export default function Home() {
             <div className="mt-8 flex flex-wrap gap-4">
               <Link
                 href="/detect"
-                className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 font-semibold text-green-900 transition-colors hover:bg-amber-300"
+                className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-6 py-3 font-semibold text-green-900 shadow-lg transition-all hover:bg-amber-300 hover:shadow-xl hover:-translate-y-0.5"
               >
                 Try Detection
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/map"
-                className="inline-flex items-center gap-2 rounded-xl border-2 border-green-300/40 px-6 py-3 font-semibold text-white transition-colors hover:bg-green-700/50"
+                className="inline-flex items-center gap-2 rounded-xl border-2 border-green-300/40 px-6 py-3 font-semibold text-white transition-all hover:bg-green-700/50 hover:border-green-300/70"
               >
                 View Map
               </Link>

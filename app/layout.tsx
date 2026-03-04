@@ -23,10 +23,35 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: "EleFind — AI-Powered Elephant Detection",
   description:
     "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
   keywords: ["elephant detection", "conservation", "AI", "YOLO", "SAHI", "Sri Lanka", "wildlife"],
+  icons: {
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
+    shortcut: "/icon.png",
+  },
+  openGraph: {
+    title: "EleFind — AI-Powered Elephant Detection",
+    description:
+      "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
+    type: "website",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        alt: "EleFind logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "EleFind — AI-Powered Elephant Detection",
+    description:
+      "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
+    images: ["/twitter-image.png"],
+  },
 };
 
 export default function RootLayout({
