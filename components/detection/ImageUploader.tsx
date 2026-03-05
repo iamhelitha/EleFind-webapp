@@ -163,8 +163,7 @@ export default function ImageUploader({
     if (
       isProcessing &&
       index === currentIndex &&
-      item.status !== "idle" &&
-      item.status !== "done"
+      item.status !== "idle"
     ) {
       return <Loader2 className="h-4 w-4 text-amber-500 animate-spin shrink-0" />;
     }
@@ -195,7 +194,7 @@ export default function ImageUploader({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3.5">
       {/* ─── Drop zone / Add images area ──────────────────────────── */}
       <div
         onDragOver={(e) => {
@@ -207,7 +206,7 @@ export default function ImageUploader({
         className={`
           relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed
           transition-colors
-          ${items.length === 0 ? "p-10" : "p-5"}
+          ${items.length === 0 ? "p-5 sm:p-6" : "p-4"}
           ${dragOver ? "border-green-500 bg-green-100/40" : "border-card-border hover:border-green-300 hover:bg-green-100/10"}
         `}
       >
@@ -221,26 +220,37 @@ export default function ImageUploader({
         />
 
         {items.length === 0 ? (
-          /* Empty state — large upload prompt */
-          <button
-            onClick={() => inputRef.current?.click()}
-            className="flex flex-col items-center cursor-pointer"
-            disabled={isProcessing}
-          >
-            <div className="rounded-2xl bg-green-100 p-4 mb-3">
-              <Upload className="h-8 w-8 text-green-600" />
+          /* Empty state — compact upload prompt */
+          <div className="w-full">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-xl bg-green-100 p-2.5 shrink-0">
+                  <Upload className="h-5 w-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-green-900">
+                    Upload aerial images
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted">
+                    Drag &amp; drop or browse &middot; JPG, PNG, TIFF &middot; max 50 MB
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                onClick={() => inputRef.current?.click()}
+                disabled={isProcessing}
+                size="sm"
+                className="w-full sm:w-auto"
+              >
+                <Plus className="h-4 w-4" />
+                Choose Images
+              </Button>
             </div>
-            <p className="text-sm font-semibold text-green-900">
-              Upload aerial images
+            <p className="mt-2 text-[11px] text-green-700/90">
+              Batch mode is enabled — you can queue multiple images.
             </p>
-            <p className="mt-1 text-xs text-muted">
-              Drag &amp; drop or click to browse &middot; JPG, PNG, TIFF
-              &middot; max 50 MB each
-            </p>
-            <p className="mt-2 text-xs text-green-700 font-medium">
-              Supports batch processing — select multiple images
-            </p>
-          </button>
+          </div>
         ) : (
           /* Queue has items — compact add-more prompt */
           <div className="w-full">
@@ -279,7 +289,7 @@ export default function ImageUploader({
             </div>
 
             {/* Queue list */}
-            <div className="space-y-1.5 max-h-64 overflow-y-auto pr-1">
+            <div className="max-h-56 space-y-1.5 overflow-y-auto pr-1">
               {items.map((item, i) => (
                 <div
                   key={item.id}
@@ -345,7 +355,7 @@ export default function ImageUploader({
         )}
       </div>
 
-      {error && <p className="text-sm text-risk-high">{error}</p>}
+      {error && <p className="text-xs text-risk-high">{error}</p>}
 
       {/* ─── SAHI parameter controls ──────────────────────────────── */}
       {items.length > 0 && (
@@ -359,7 +369,7 @@ export default function ImageUploader({
           </button>
 
           {showParams && (
-            <div className="mt-3 grid gap-4 sm:grid-cols-2 rounded-xl border border-card-border bg-green-100/20 p-4 animate-fade-in">
+            <div className="mt-2.5 animate-fade-in grid gap-3 rounded-xl border border-card-border bg-green-100/20 p-3.5 sm:grid-cols-2">
               <SliderField
                 label="Confidence Threshold"
                 value={confThreshold}
@@ -403,27 +413,32 @@ export default function ImageUploader({
 
       {/* ─── Run batch button ─────────────────────────────────────── */}
       {items.length > 0 && (
-        <Button
-          onClick={handleRun}
-          disabled={pendingCount === 0 || isProcessing}
-          loading={isProcessing}
-          size="lg"
-          className="w-full"
-        >
-          {isProcessing ? (
-            <>
-              Processing {currentIndex + 1} of {items.length}…
-            </>
-          ) : pendingCount > 0 ? (
-            <>
-              <Play className="h-4 w-4" />
-              Detect Elephants
-              {pendingCount > 1 && ` (${pendingCount} images)`}
-            </>
-          ) : (
-            <>All images processed</>
-          )}
-        </Button>
+        <div className="flex flex-col gap-2 rounded-xl border border-card-border bg-green-100/10 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-muted">
+            {isProcessing
+              ? `Processing ${currentIndex + 1} of ${items.length}`
+              : `${pendingCount} image${pendingCount !== 1 ? "s" : ""} ready to process`}
+          </p>
+          <Button
+            onClick={handleRun}
+            disabled={pendingCount === 0 || isProcessing}
+            loading={isProcessing}
+            size="sm"
+            className="w-full sm:w-auto"
+          >
+            {isProcessing ? (
+              <>Running…</>
+            ) : pendingCount > 0 ? (
+              <>
+                <Play className="h-4 w-4" />
+                Detect
+                {pendingCount > 1 && ` (${pendingCount})`}
+              </>
+            ) : (
+              <>All processed</>
+            )}
+          </Button>
+        </div>
       )}
     </div>
   );

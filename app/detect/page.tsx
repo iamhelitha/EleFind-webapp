@@ -146,7 +146,6 @@ export default function DetectPage() {
       setIsProcessing(false);
       setCurrentIndex(-1);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -175,8 +174,8 @@ export default function DetectPage() {
     <div className="animate-fade-in">
       {/* ─── Page Header with Pipeline ──────────────────────────── */}
       <div className="bg-green-900 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-9 lg:px-8">
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-green-700/60 px-3 py-1 text-xs font-semibold text-green-100">
                 <Zap className="h-3.5 w-3.5" />
@@ -261,9 +260,9 @@ export default function DetectPage() {
       </div>
 
       {/* ─── Main Content: Unified Detection Panel ─────────────── */}
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8 space-y-6">
+      <div className="mx-auto max-w-5xl space-y-4 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
         {/* Unified card: queue + upload live here together */}
-        <Card className="p-6 sm:p-8">
+        <Card className="p-4 sm:p-5">
           <ImageUploader
             items={items}
             setItems={setItems}
@@ -275,9 +274,9 @@ export default function DetectPage() {
 
         {/* ─── Batch summary bar ────────────────────────────────── */}
         {doneItems.length > 0 && (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-3">
             <div className="h-px flex-1 bg-card-border" />
-            <div className="flex items-center gap-2 rounded-full bg-green-100 px-4 py-1.5 text-sm font-semibold text-green-900">
+            <div className="flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-900 sm:px-4 sm:py-1.5 sm:text-sm">
               <CheckCircle2 className="h-4 w-4 text-green-700" />
               {doneItems.length} image{doneItems.length !== 1 ? "s" : ""}{" "}
               processed &middot; {totalElephants} elephant
@@ -289,7 +288,7 @@ export default function DetectPage() {
 
         {/* ─── Per-image results (expandable) ───────────────────── */}
         {doneItems.length > 0 && (
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {items
               .filter((i) => i.status === "done" && i.result)
               .map((item) => {
@@ -301,31 +300,33 @@ export default function DetectPage() {
                       onClick={() =>
                         setExpandedItem(isExpanded ? null : item.id)
                       }
-                      className="w-full flex items-center gap-3 px-5 py-4 text-left hover:bg-green-100/20 transition-colors cursor-pointer"
+                      className="w-full cursor-pointer px-4 py-3 text-left transition-colors hover:bg-green-100/20 sm:px-5 sm:py-4"
                     >
-                      {/* Thumbnail */}
-                      {item.previewUrl ? (
-                        <img
-                          src={item.previewUrl}
-                          alt=""
-                          className="h-10 w-10 rounded-lg object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center shrink-0">
-                          <Camera className="h-5 w-5 text-green-500" />
-                        </div>
-                      )}
+                      <div className="flex items-center gap-3">
+                        {/* Thumbnail */}
+                        {item.previewUrl ? (
+                          <img
+                            src={item.previewUrl}
+                            alt=""
+                            className="h-10 w-10 shrink-0 rounded-lg object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100">
+                            <Camera className="h-5 w-5 text-green-500" />
+                          </div>
+                        )}
 
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-green-900 truncate">
-                          {item.file.name}
-                        </p>
-                        <p className="text-xs text-muted">
-                          {item.result!.elephantCount} elephant
-                          {item.result!.elephantCount !== 1 ? "s" : ""} detected
-                          {item.result!.elephantCount > 0 &&
-                            ` · avg ${(item.result!.avgConfidence * 100).toFixed(1)}% confidence`}
-                        </p>
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-semibold text-green-900">
+                            {item.file.name}
+                          </p>
+                          <p className="text-xs text-muted">
+                            {item.result!.elephantCount} elephant
+                            {item.result!.elephantCount !== 1 ? "s" : ""} detected
+                            {item.result!.elephantCount > 0 &&
+                              ` · avg ${(item.result!.avgConfidence * 100).toFixed(1)}% confidence`}
+                          </p>
+                        </div>
                       </div>
 
                       {/* Elephant count badge */}
@@ -349,7 +350,7 @@ export default function DetectPage() {
 
                     {/* Expanded result */}
                     {isExpanded && (
-                      <div className="border-t border-card-border px-5 py-5 animate-fade-in">
+                      <div className="animate-fade-in border-t border-card-border px-4 py-4 sm:px-5 sm:py-5">
                         <DetectionResults result={item.result!} />
                       </div>
                     )}
@@ -359,35 +360,11 @@ export default function DetectPage() {
           </div>
         )}
 
-        {/* ─── Empty state — no items yet ────────────────────────── */}
+        {/* ─── Compact helper when queue is empty ─────────────────── */}
         {items.length === 0 && (
-          <Card className="flex flex-col items-center justify-center p-12 text-center border-dashed">
-            <div className="rounded-full bg-green-100 p-4 mb-4">
-              <Camera className="h-8 w-8 text-green-500" />
-            </div>
-            <p className="font-heading text-lg font-bold text-green-900">
-              No detections yet
-            </p>
-            <p className="mt-2 max-w-sm text-sm text-muted">
-              Upload aerial images above to run them through the YOLOv11 + SAHI
-              elephant detection pipeline. You can queue multiple images for
-              batch processing.
-            </p>
-
-            {/* Tech stack badges */}
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
-              {["YOLOv11", "SAHI", "Hugging Face", "Batch Processing"].map(
-                (tech) => (
-                  <span
-                    key={tech}
-                    className="rounded-full bg-green-100 px-3 py-1 text-xs font-medium text-green-700"
-                  >
-                    {tech}
-                  </span>
-                )
-              )}
-            </div>
-          </Card>
+          <p className="px-1 text-center text-xs text-muted">
+            Results will appear below after processing starts.
+          </p>
         )}
       </div>
     </div>
