@@ -11,6 +11,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { runDetection } from "@/lib/gradio-client";
+import { persistDetectionAsync } from "@/lib/persist-detection";
 import type { DetectionApiResponse } from "@/types";
 
 /** Maximum image upload size: 50 MB. */
@@ -66,6 +67,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
       overlapRatio,
       iouThreshold,
     });
+
+    // Non-blocking — DB failure must never affect the detection response
+    persistDetectionAsync(file, result, {
+      confThreshold,
+      sliceSize,
+      overlapRatio,
+      iouThreshold,
+    }).catch((err) => console.error("[detect] persist failed:", err));
 
     return NextResponse.json({ success: true, data: result });
   } catch (error) {
