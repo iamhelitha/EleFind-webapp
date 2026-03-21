@@ -22,6 +22,11 @@ const nextConfig: NextConfig = {
     ],
   },
 
+  /** Pin workspace root to project directory to avoid lockfile detection ambiguity. */
+  turbopack: {
+    root: __dirname,
+  },
+
   /** Suppress Leaflet's window-access warnings during build. */
   webpack: (config) => {
     config.resolve.fallback = {
