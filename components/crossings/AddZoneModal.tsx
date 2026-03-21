@@ -204,7 +204,7 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
                 }
               />
               <p className="mt-1 text-xs text-muted">
-                Tip: Use the &ldquo;Draw Zone&rdquo; button on the map to draw a polygon instead.
+                Tip: Use the &ldquo;Draw Rectangle&rdquo; button on the map to draw a zone instead.
               </p>
             </div>
           )}

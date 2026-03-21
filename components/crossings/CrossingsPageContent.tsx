@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Card from "@/components/ui/Card";
 import Badge, { riskVariant } from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
@@ -72,44 +72,26 @@ export default function CrossingsPageContent({
             Known elephant crossing areas with risk-level classification.
           </p>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {session?.user ? (
-            <>
-              <span className="text-xs text-muted hidden sm:block">
-                {session.user.name ?? session.user.email}
-              </span>
-              <button
-                onClick={() => setIsDrawingMode((v) => !v)}
-                className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
-                  isDrawingMode
-                    ? "bg-amber-500 border-amber-500 text-white"
-                    : "border-green-700 text-green-700 hover:bg-green-50"
-                }`}
-              >
-                {isDrawingMode ? "Cancel Draw" : "Draw Zone"}
-              </button>
-              <button
-                onClick={handleAddZoneClick}
-                className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
-              >
-                + Add Zone
-              </button>
-              <button
-                onClick={() => signOut({ callbackUrl: "/crossings" })}
-                className="rounded-lg border border-card-border px-3 py-2 text-xs text-muted hover:border-green-300 transition-colors"
-              >
-                Sign out
-              </button>
-            </>
-          ) : (
-            <a
-              href="/login"
-              className="rounded-lg border border-green-700 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 transition-colors"
+        {session?.user && (
+          <div className="flex items-center gap-3 shrink-0">
+            <button
+              onClick={() => setIsDrawingMode((v) => !v)}
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                isDrawingMode
+                  ? "bg-amber-500 border-amber-500 text-white"
+                  : "border-green-700 text-green-700 hover:bg-green-50"
+              }`}
             >
-              Sign in
-            </a>
-          )}
-        </div>
+              {isDrawingMode ? "Cancel Draw" : "Draw Rectangle"}
+            </button>
+            <button
+              onClick={handleAddZoneClick}
+              className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+            >
+              + Add Zone
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">
@@ -122,11 +104,12 @@ export default function CrossingsPageContent({
               filters={MAP_FILTERS}
               drawingEnabled={isDrawingMode}
               onZoneDrawn={handleZoneDrawn}
+              focusBoundary={selected?.boundary ?? null}
             />
           </div>
           {isDrawingMode && (
             <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-amber-500 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg pointer-events-none">
-              Click points on the map to draw a zone. Double-click to finish.
+              Click and drag on the map to draw a rectangle zone.
             </div>
           )}
         </div>

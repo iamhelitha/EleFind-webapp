@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
+import type { LatLngTuple } from "@/types";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-draw/dist/leaflet.draw.css";
@@ -23,6 +24,15 @@ const CARTO_POSITRON =
 const CARTO_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
+function FlyToBounds({ boundary }: { boundary: LatLngTuple[] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!boundary || boundary.length < 2) return;
+    map.flyToBounds(boundary as L.LatLngBoundsExpression, { padding: [40, 40], maxZoom: 14 });
+  }, [map, boundary]);
+  return null;
+}
+
 interface DrawControlProps {
   enabled: boolean;
   onZoneDrawn: (polygon: GeoJSON.Polygon) => void;
@@ -43,8 +53,8 @@ function DrawControl({ enabled, onZoneDrawn }: DrawControlProps) {
 
     const drawControl = new DrawControl({
       draw: {
-        polygon: { allowIntersection: false, showArea: true },
-        rectangle: true,
+        polygon: false,
+        rectangle: { showArea: true },
         polyline: false,
         circle: false,
         marker: false,
@@ -81,6 +91,7 @@ interface DrawableEleMapProps {
   className?: string;
   drawingEnabled: boolean;
   onZoneDrawn: (polygon: GeoJSON.Polygon) => void;
+  focusBoundary?: LatLngTuple[] | null;
 }
 
 export default function DrawableEleMap({
@@ -90,6 +101,7 @@ export default function DrawableEleMap({
   className = "",
   drawingEnabled,
   onZoneDrawn,
+  focusBoundary = null,
 }: DrawableEleMapProps) {
   const visibleDetections = filters.showDetections
     ? detections.filter((d) => d.confidence >= filters.minConfidence)
@@ -114,6 +126,7 @@ export default function DrawableEleMap({
       ))}
 
       <DrawControl enabled={drawingEnabled} onZoneDrawn={onZoneDrawn} />
+      <FlyToBounds boundary={focusBoundary} />
     </MapContainer>
   );
 }
