@@ -52,5 +52,16 @@ export async function initDb() {
       ON crossing_zones USING GIST (polygon);
   `);
 
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS users (
+      id            TEXT PRIMARY KEY,
+      email         TEXT UNIQUE NOT NULL,
+      name          TEXT,
+      password_hash TEXT NOT NULL,
+      role          TEXT NOT NULL DEFAULT 'officer',
+      created_at    TIMESTAMPTZ DEFAULT NOW()
+    );
+  `);
+
   console.log("[db-init] Tables ready.");
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import { useSession, signOut } from "next-auth/react";
 import Card from "@/components/ui/Card";
 import Badge, { riskVariant } from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
@@ -39,6 +40,7 @@ const MAP_FILTERS: MapFilters = {
 export default function CrossingsPageContent({
   initialCrossings,
 }: CrossingsPageContentProps) {
+  const { data: session } = useSession();
   const [zones, setZones] = useState<CrossingZone[]>(initialCrossings);
   const [selected, setSelected] = useState<CrossingZone | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -59,12 +61,34 @@ export default function CrossingsPageContent({
             Known elephant crossing areas with risk-level classification.
           </p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="shrink-0 rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
-        >
-          + Add Zone
-        </button>
+        <div className="flex items-center gap-3 shrink-0">
+          {session?.user ? (
+            <>
+              <span className="text-xs text-muted hidden sm:block">
+                {session.user.name ?? session.user.email}
+              </span>
+              <button
+                onClick={() => setShowModal(true)}
+                className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+              >
+                + Add Zone
+              </button>
+              <button
+                onClick={() => signOut({ callbackUrl: "/crossings" })}
+                className="rounded-lg border border-card-border px-3 py-2 text-xs text-muted hover:border-green-300 transition-colors"
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <a
+              href="/login"
+              className="rounded-lg border border-green-700 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 transition-colors"
+            >
+              Sign in
+            </a>
+          )}
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-5">

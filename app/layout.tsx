@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { Toaster } from "react-hot-toast";
+import AuthSessionProvider from "@/components/providers/SessionProvider";
 
 /**
  * Root layout — provides the Syne + DM Sans font variables,
@@ -74,9 +75,11 @@ export default function RootLayout({
             },
           }}
         />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <AuthSessionProvider>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </AuthSessionProvider>
       </body>
     </html>
   );

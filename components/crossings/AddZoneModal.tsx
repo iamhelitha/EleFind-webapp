@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import Spinner from "@/components/ui/Spinner";
 import type { CrossingZone } from "@/types";
 
@@ -12,12 +13,39 @@ interface AddZoneModalProps {
 const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;
 
 export default function AddZoneModal({ onSuccess, onClose }: AddZoneModalProps) {
+  const { data: session } = useSession();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [riskLevel, setRiskLevel] = useState<string>("medium");
   const [coordinates, setCoordinates] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  if (!session?.user) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl text-center">
+          <p className="text-sm text-muted mb-4">
+            You must be logged in to add zones.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <a
+              href="/login"
+              className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+            >
+              Sign in
+            </a>
+            <button
+              onClick={onClose}
+              className="rounded-lg border border-card-border px-4 py-2 text-sm text-muted hover:border-green-300 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
