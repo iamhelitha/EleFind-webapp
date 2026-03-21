@@ -1,56 +1,39 @@
-"use client";
-
-import { useState } from "react";
-import dynamic from "next/dynamic";
-import MapControls from "@/components/map/MapControls";
-import Spinner from "@/components/ui/Spinner";
+import MapPageContent from "@/components/map/MapPageContent";
 import { MOCK_DETECTIONS, MOCK_CROSSINGS } from "@/lib/mock-data";
-import type { MapFilters } from "@/types";
+import type { MapDetection, CrossingZone } from "@/types";
 
 /**
  * Full-viewport interactive map page.
  *
+ * This is a server component that fetches real data from the API.
  * The Leaflet map is loaded via `next/dynamic` with `ssr: false`
  * to avoid Leaflet's `window` access crashing SSR.
  */
 
-const EleMap = dynamic(() => import("@/components/map/EleMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full items-center justify-center bg-green-100/20">
-      <div className="flex flex-col items-center gap-2">
-        <Spinner size="lg" />
-        <p className="text-sm text-muted">Loading map…</p>
-      </div>
-    </div>
-  ),
-});
+export default async function MapPage() {
+  let detections: MapDetection[] = MOCK_DETECTIONS;
+  let crossings: CrossingZone[] = MOCK_CROSSINGS;
 
-const DEFAULT_FILTERS: MapFilters = {
-  showDetections: true,
-  showCrossingZones: true,
-  minConfidence: 0,
-  dateFrom: null,
-  dateTo: null,
-};
-
-export default function MapPage() {
-  const [filters, setFilters] = useState<MapFilters>(DEFAULT_FILTERS);
-  const [controlsCollapsed, setControlsCollapsed] = useState(false);
+  try {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const [detectRes, crossRes] = await Promise.all([
+      fetch(`${appUrl}/api/detections`, { cache: "no-store" }),
+      fetch(`${appUrl}/api/crossings`, { cache: "no-store" }),
+    ]);
+    if (detectRes.ok) {
+      detections = await detectRes.json();
+    }
+    if (crossRes.ok) {
+      crossings = await crossRes.json();
+    }
+  } catch {
+    console.warn("Could not fetch from DB, using mock data");
+  }
 
   return (
-    <div className="relative" style={{ height: "calc(100vh - 4rem)" }}>
-      <EleMap
-        detections={MOCK_DETECTIONS}
-        crossingZones={MOCK_CROSSINGS}
-        filters={filters}
-      />
-      <MapControls
-        filters={filters}
-        onChange={setFilters}
-        collapsed={controlsCollapsed}
-        onToggleCollapse={() => setControlsCollapsed(!controlsCollapsed)}
-      />
-    </div>
+    <MapPageContent
+      initialDetections={detections}
+      initialCrossings={crossings}
+    />
   );
 }
