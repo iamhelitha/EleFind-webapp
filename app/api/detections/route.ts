@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
 
     const { rows } = await pool.query(
       `SELECT id, image_name, lat, lng, confidence, elephant_count,
-              bbox, source_type, detected_at
+              bbox, source_type, confirmation_count, detected_at
        FROM detections
        WHERE ($1::float IS NULL OR confidence >= $1)
          AND ($2::timestamptz IS NULL OR detected_at >= $2)
@@ -30,6 +30,7 @@ export async function GET(req: NextRequest) {
       confidence: r.confidence,
       imageName: r.image_name ?? "",
       detectedAt: r.detected_at,
+      confirmationCount: r.confirmation_count ?? 0,
     }));
 
     return NextResponse.json(detections);

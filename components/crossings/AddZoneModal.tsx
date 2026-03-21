@@ -6,13 +6,15 @@ import Spinner from "@/components/ui/Spinner";
 import type { CrossingZone } from "@/types";
 
 interface AddZoneModalProps {
+  /** Pre-drawn polygon from the map. If provided, coordinate textarea is hidden. */
+  polygon?: GeoJSON.Polygon;
   onSuccess: (zone: CrossingZone) => void;
   onClose: () => void;
 }
 
 const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;
 
-export default function AddZoneModal({ onSuccess, onClose }: AddZoneModalProps) {
+export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneModalProps) {
   const { data: session } = useSession();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -51,45 +53,48 @@ export default function AddZoneModal({ onSuccess, onClose }: AddZoneModalProps) 
     e.preventDefault();
     setError(null);
 
-    // Parse coordinates: one "lat,lng" pair per line
-    const lines = coordinates
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
+    let polygonGeoJSON: GeoJSON.Polygon;
 
-    if (lines.length < 3) {
-      setError("Enter at least 3 coordinate pairs.");
-      return;
-    }
+    if (polygon) {
+      // Use the pre-drawn polygon from the map
+      polygonGeoJSON = polygon;
+    } else {
+      // Parse the manual coordinate textarea
+      const lines = coordinates
+        .split("\n")
+        .map((l) => l.trim())
+        .filter(Boolean);
 
-    const pairs: [number, number][] = [];
-    for (const line of lines) {
-      const parts = line.split(",").map((p) => p.trim());
-      if (parts.length !== 2) {
-        setError(`Invalid coordinate: "${line}". Format: lat, lng`);
+      if (lines.length < 3) {
+        setError("Enter at least 3 coordinate pairs.");
         return;
       }
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-      if (isNaN(lat) || isNaN(lng)) {
-        setError(`Non-numeric coordinate: "${line}"`);
-        return;
+
+      const pairs: [number, number][] = [];
+      for (const line of lines) {
+        const parts = line.split(",").map((p) => p.trim());
+        if (parts.length !== 2) {
+          setError(`Invalid coordinate: "${line}". Format: lat, lng`);
+          return;
+        }
+        const lat = parseFloat(parts[0]);
+        const lng = parseFloat(parts[1]);
+        if (isNaN(lat) || isNaN(lng)) {
+          setError(`Non-numeric coordinate: "${line}"`);
+          return;
+        }
+        pairs.push([lng, lat]); // GeoJSON: [lng, lat]
       }
-      // GeoJSON uses [lng, lat]
-      pairs.push([lng, lat]);
-    }
 
-    // Close polygon
-    const first = pairs[0];
-    const last = pairs[pairs.length - 1];
-    if (first[0] !== last[0] || first[1] !== last[1]) {
-      pairs.push([...first]);
-    }
+      // Close polygon
+      const first = pairs[0];
+      const last = pairs[pairs.length - 1];
+      if (first[0] !== last[0] || first[1] !== last[1]) {
+        pairs.push([...first]);
+      }
 
-    const polygonGeoJSON = {
-      type: "Polygon",
-      coordinates: [pairs],
-    };
+      polygonGeoJSON = { type: "Polygon", coordinates: [pairs] };
+    }
 
     setLoading(true);
     try {
@@ -112,6 +117,11 @@ export default function AddZoneModal({ onSuccess, onClose }: AddZoneModalProps) 
       setLoading(false);
     }
   }
+
+  // Count points from drawn polygon (ring minus the closing repeat)
+  const drawnPointCount = polygon
+    ? polygon.coordinates[0].length - 1
+    : null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -174,20 +184,30 @@ export default function AddZoneModal({ onSuccess, onClose }: AddZoneModalProps) 
             </select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-green-900 mb-1">
-              Coordinates <span className="text-red-500">*</span>
-            </label>
-            <textarea
-              value={coordinates}
-              onChange={(e) => setCoordinates(e.target.value)}
-              rows={5}
-              className="w-full rounded-lg border border-card-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-              placeholder={
-                "Enter one lat,lng pair per line. Minimum 3 points.\nExample:\n7.8731, 80.7718\n7.9731, 80.8718\n7.8731, 80.8718"
-              }
-            />
-          </div>
+          {/* Polygon — pre-drawn or manual */}
+          {drawnPointCount !== null ? (
+            <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+              ✓ Zone drawn: <strong>{drawnPointCount} points</strong>
+            </div>
+          ) : (
+            <div>
+              <label className="block text-sm font-medium text-green-900 mb-1">
+                Coordinates <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={coordinates}
+                onChange={(e) => setCoordinates(e.target.value)}
+                rows={5}
+                className="w-full rounded-lg border border-card-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                placeholder={
+                  "Enter one lat,lng pair per line. Minimum 3 points.\nExample:\n7.8731, 80.7718\n7.9731, 80.8718\n7.8731, 80.8718"
+                }
+              />
+              <p className="mt-1 text-xs text-muted">
+                Tip: Use the &ldquo;Draw Zone&rdquo; button on the map to draw a polygon instead.
+              </p>
+            </div>
+          )}
 
           {error && (
             <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">

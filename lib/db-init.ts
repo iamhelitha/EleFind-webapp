@@ -53,6 +53,36 @@ export async function initDb() {
   `);
 
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS zone_confirmations (
+      id              TEXT PRIMARY KEY,
+      zone_id         TEXT NOT NULL REFERENCES crossing_zones(id) ON DELETE CASCADE,
+      ip_hash         TEXT NOT NULL,
+      confirmed_at    TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(zone_id, ip_hash)
+    );
+  `);
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS detection_confirmations (
+      id              TEXT PRIMARY KEY,
+      detection_id    TEXT NOT NULL REFERENCES detections(id) ON DELETE CASCADE,
+      ip_hash         TEXT NOT NULL,
+      confirmed_at    TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(detection_id, ip_hash)
+    );
+  `);
+
+  await pool.query(`
+    ALTER TABLE crossing_zones
+    ADD COLUMN IF NOT EXISTS confirmation_count INTEGER DEFAULT 0;
+  `);
+
+  await pool.query(`
+    ALTER TABLE detections
+    ADD COLUMN IF NOT EXISTS confirmation_count INTEGER DEFAULT 0;
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id            TEXT PRIMARY KEY,
       email         TEXT UNIQUE NOT NULL,

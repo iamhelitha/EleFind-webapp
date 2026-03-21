@@ -1,33 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useSession, signOut } from "next-auth/react";
 import Card from "@/components/ui/Card";
 import Badge, { riskVariant } from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
+import ConfirmButton from "@/components/ui/ConfirmButton";
 import AddZoneModal from "@/components/crossings/AddZoneModal";
 import type { CrossingZone, MapFilters } from "@/types";
-
-/**
- * Client-side wrapper for the crossings page.
- *
- * Handles interactive state (selected zone, zones list) while receiving
- * initial data from the server component parent.
- */
 
 interface CrossingsPageContentProps {
   initialCrossings: CrossingZone[];
 }
 
-const EleMap = dynamic(() => import("@/components/map/EleMap"), {
-  ssr: false,
-  loading: () => (
-    <div className="flex h-full items-center justify-center bg-green-100/20">
-      <Spinner size="lg" />
-    </div>
-  ),
-});
+const DrawableEleMap = dynamic(
+  () => import("@/components/map/DrawableEleMap"),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center bg-green-100/20">
+        <Spinner size="lg" />
+      </div>
+    ),
+  }
+);
 
 const MAP_FILTERS: MapFilters = {
   showDetections: false,
@@ -44,10 +41,24 @@ export default function CrossingsPageContent({
   const [zones, setZones] = useState<CrossingZone[]>(initialCrossings);
   const [selected, setSelected] = useState<CrossingZone | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [isDrawingMode, setIsDrawingMode] = useState(false);
+  const [drawnPolygon, setDrawnPolygon] = useState<GeoJSON.Polygon | null>(null);
 
   function handleZoneCreated(newZone: CrossingZone) {
     setZones((prev) => [newZone, ...prev]);
+    setDrawnPolygon(null);
     setShowModal(false);
+  }
+
+  const handleZoneDrawn = useCallback((polygon: GeoJSON.Polygon) => {
+    setIsDrawingMode(false);
+    setDrawnPolygon(polygon);
+    setShowModal(true);
+  }, []);
+
+  function handleAddZoneClick() {
+    setDrawnPolygon(null);
+    setShowModal(true);
   }
 
   return (
@@ -68,7 +79,17 @@ export default function CrossingsPageContent({
                 {session.user.name ?? session.user.email}
               </span>
               <button
-                onClick={() => setShowModal(true)}
+                onClick={() => setIsDrawingMode((v) => !v)}
+                className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
+                  isDrawingMode
+                    ? "bg-amber-500 border-amber-500 text-white"
+                    : "border-green-700 text-green-700 hover:bg-green-50"
+                }`}
+              >
+                {isDrawingMode ? "Cancel Draw" : "Draw Zone"}
+              </button>
+              <button
+                onClick={handleAddZoneClick}
                 className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
               >
                 + Add Zone
@@ -93,12 +114,21 @@ export default function CrossingsPageContent({
 
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Map — takes 3/5 */}
-        <div className="lg:col-span-3 h-[500px] lg:h-[600px] rounded-xl overflow-hidden border border-card-border">
-          <EleMap
-            detections={[]}
-            crossingZones={zones}
-            filters={MAP_FILTERS}
-          />
+        <div className="lg:col-span-3 relative">
+          <div className="h-[500px] lg:h-[600px] rounded-xl overflow-hidden border border-card-border">
+            <DrawableEleMap
+              detections={[]}
+              crossingZones={zones}
+              filters={MAP_FILTERS}
+              drawingEnabled={isDrawingMode}
+              onZoneDrawn={handleZoneDrawn}
+            />
+          </div>
+          {isDrawingMode && (
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-amber-500 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg pointer-events-none">
+              Click points on the map to draw a zone. Double-click to finish.
+            </div>
+          )}
         </div>
 
         {/* Zone list — takes 2/5 */}
@@ -113,38 +143,47 @@ export default function CrossingsPageContent({
             </div>
           ) : (
             zones.map((zone) => (
-              <button
-                key={zone.id}
-                onClick={() => setSelected(zone)}
-                className="w-full text-left"
-              >
-                <Card
-                  className={`p-4 transition-all cursor-pointer ${
-                    selected?.id === zone.id
-                      ? "ring-2 ring-green-500"
-                      : "hover:border-green-300"
-                  }`}
+              <div key={zone.id}>
+                <button
+                  onClick={() => setSelected(zone)}
+                  className="w-full text-left"
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="font-heading font-bold text-green-900">
-                        {zone.name}
-                      </p>
-                      {zone.description && (
-                        <p className="mt-1 text-xs text-muted line-clamp-2">
-                          {zone.description}
+                  <Card
+                    className={`p-4 transition-all cursor-pointer ${
+                      selected?.id === zone.id
+                        ? "ring-2 ring-green-500"
+                        : "hover:border-green-300"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <p className="font-heading font-bold text-green-900">
+                          {zone.name}
                         </p>
-                      )}
-                      <p className="mt-1 text-xs text-muted">
-                        Created {new Date(zone.createdAt).toLocaleDateString()}
-                      </p>
+                        {zone.description && (
+                          <p className="mt-1 text-xs text-muted line-clamp-2">
+                            {zone.description}
+                          </p>
+                        )}
+                        <p className="mt-1 text-xs text-muted">
+                          Created {new Date(zone.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge variant={riskVariant[zone.riskLevel]}>
+                        {zone.riskLevel}
+                      </Badge>
                     </div>
-                    <Badge variant={riskVariant[zone.riskLevel]}>
-                      {zone.riskLevel}
-                    </Badge>
-                  </div>
-                </Card>
-              </button>
+                  </Card>
+                </button>
+                <div className="px-1 mt-1.5">
+                  <ConfirmButton
+                    id={zone.id}
+                    type="zone"
+                    initialCount={zone.confirmationCount ?? 0}
+                    size="sm"
+                  />
+                </div>
+              </div>
             ))
           )}
         </div>
@@ -152,8 +191,12 @@ export default function CrossingsPageContent({
 
       {showModal && (
         <AddZoneModal
+          polygon={drawnPolygon ?? undefined}
           onSuccess={handleZoneCreated}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            setDrawnPolygon(null);
+          }}
         />
       )}
     </div>

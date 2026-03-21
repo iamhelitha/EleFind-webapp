@@ -4,11 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Menu, X } from "lucide-react";
 
 /**
  * Top navigation bar with responsive mobile menu.
- * Uses the EleFind forest-green palette and Syne heading font.
+ * Shows an "Admin" link only for authenticated officers.
  */
 
 const NAV_LINKS = [
@@ -21,6 +22,17 @@ const NAV_LINKS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { data: session } = useSession();
+  const isOfficer = session?.user?.role === "officer";
+
+  const linkClass = (href: string) => {
+    const active = pathname === href || pathname.startsWith(href + "/") && href !== "/";
+    return `rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+      active
+        ? "bg-green-100 text-green-900"
+        : "text-muted hover:bg-green-100/60 hover:text-green-900"
+    }`;
+  };
 
   return (
     <header className="sticky top-0 z-50 border-b border-card-border bg-card-bg/90 backdrop-blur-md">
@@ -42,25 +54,20 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1">
-          {NAV_LINKS.map(({ href, label }) => {
-            const active = pathname === href;
-            return (
-              <li key={href}>
-                <Link
-                  href={href}
-                  className={`
-                    rounded-lg px-3 py-2 text-sm font-medium transition-colors
-                    ${active
-                      ? "bg-green-100 text-green-900"
-                      : "text-muted hover:bg-green-100/60 hover:text-green-900"
-                    }
-                  `}
-                >
-                  {label}
-                </Link>
-              </li>
-            );
-          })}
+          {NAV_LINKS.map(({ href, label }) => (
+            <li key={href}>
+              <Link href={href} className={linkClass(href)}>
+                {label}
+              </Link>
+            </li>
+          ))}
+          {isOfficer && (
+            <li>
+              <Link href="/admin" className={linkClass("/admin")}>
+                Admin
+              </Link>
+            </li>
+          )}
         </ul>
 
         {/* Mobile hamburger */}
@@ -77,26 +84,28 @@ export default function Navbar() {
       {menuOpen && (
         <div className="border-t border-card-border bg-card-bg md:hidden animate-fade-in">
           <ul className="flex flex-col gap-1 px-4 py-3">
-            {NAV_LINKS.map(({ href, label }) => {
-              const active = pathname === href;
-              return (
-                <li key={href}>
-                  <Link
-                    href={href}
-                    onClick={() => setMenuOpen(false)}
-                    className={`
-                      block rounded-lg px-3 py-2 text-sm font-medium transition-colors
-                      ${active
-                        ? "bg-green-100 text-green-900"
-                        : "text-muted hover:bg-green-100/60 hover:text-green-900"
-                      }
-                    `}
-                  >
-                    {label}
-                  </Link>
-                </li>
-              );
-            })}
+            {NAV_LINKS.map(({ href, label }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  onClick={() => setMenuOpen(false)}
+                  className={`block ${linkClass(href)}`}
+                >
+                  {label}
+                </Link>
+              </li>
+            ))}
+            {isOfficer && (
+              <li>
+                <Link
+                  href="/admin"
+                  onClick={() => setMenuOpen(false)}
+                  className={`block ${linkClass("/admin")}`}
+                >
+                  Admin
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       )}

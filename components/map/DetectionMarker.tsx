@@ -4,6 +4,7 @@ import { Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import type { MapDetection } from "@/types";
 import { confidenceColor, formatLatLng } from "@/lib/geo-utils";
+import ConfirmButton from "@/components/ui/ConfirmButton";
 
 /**
  * Map marker for an elephant detection.
@@ -43,19 +44,27 @@ export default function DetectionMarker({ detection }: DetectionMarkerProps) {
       icon={icon}
     >
       <Popup>
-        <div className="min-w-[180px] text-sm">
+        <div className="min-w-[180px] text-sm space-y-1">
           <p className="font-bold text-green-900">
             {detection.elephantCount} elephant{detection.elephantCount > 1 ? "s" : ""}
           </p>
-          <p className="text-muted mt-1">
+          <p className="text-muted">
             Confidence: <strong>{(detection.confidence * 100).toFixed(1)}%</strong>
           </p>
           <p className="text-muted">
             {formatLatLng(detection.latitude, detection.longitude)}
           </p>
-          <p className="text-muted text-xs mt-1">
+          <p className="text-muted text-xs">
             {new Date(detection.detectedAt).toLocaleDateString()} &middot; {detection.imageName}
           </p>
+          <div className="pt-1">
+            <ConfirmButton
+              id={detection.id}
+              type="detection"
+              initialCount={detection.confirmationCount ?? 0}
+              size="sm"
+            />
+          </div>
         </div>
       </Popup>
     </Marker>

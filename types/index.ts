@@ -65,6 +65,7 @@ export interface MapDetection {
   imageName: string;
   detectedAt: string; // ISO date string
   thumbnailUrl?: string;
+  confirmationCount?: number;
 }
 
 /** Risk level for an elephant crossing zone. */
@@ -82,6 +83,7 @@ export interface CrossingZone {
   /** Polygon vertices as [lat, lng] pairs. */
   boundary: LatLngTuple[];
   createdAt: string;
+  confirmationCount?: number;
 }
 
 /* ------------------------------------------------------------------ */

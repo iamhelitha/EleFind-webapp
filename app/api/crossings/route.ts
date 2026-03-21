@@ -6,7 +6,7 @@ import type { CrossingZone } from "@/types";
 export async function GET() {
   try {
     const { rows } = await pool.query(
-      `SELECT id, name, description, risk_level, created_at
+      `SELECT id, name, description, risk_level, confirmation_count, created_at
        FROM crossing_zones
        ORDER BY created_at DESC`
     );
@@ -18,6 +18,7 @@ export async function GET() {
       riskLevel: (r.risk_level as string).toUpperCase() as CrossingZone["riskLevel"],
       boundary: [],
       createdAt: r.created_at,
+      confirmationCount: r.confirmation_count ?? 0,
     }));
 
     return NextResponse.json(zones);
