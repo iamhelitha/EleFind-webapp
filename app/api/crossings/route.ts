@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     const row = rows[0];
     // Convert the submitted GeoJSON polygon back to [lat, lng] pairs for Leaflet
     const boundary: [number, number][] = (polygonGeoJSON as GeoJSON.Polygon)
-      .coordinates[0].map(([lng, lat]: [number, number]) => [lat, lng]);
+      .coordinates[0].map((pos) => [pos[1], pos[0]] as [number, number]);
 
     const zone: CrossingZone = {
       id: row.id,
