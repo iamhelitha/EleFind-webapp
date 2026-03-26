@@ -11,6 +11,8 @@ import {
   Zap,
   ChevronDown,
   ChevronUp,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import ImageUploader from "@/components/detection/ImageUploader";
 import DetectionResults from "@/components/detection/DetectionResults";
@@ -326,6 +328,21 @@ export default function DetectPage() {
                             {item.result!.elephantCount > 0 &&
                               ` · avg ${(item.result!.avgConfidence * 100).toFixed(1)}% confidence`}
                           </p>
+                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
+                            {item.result!.location && (
+                              <span className="flex items-center gap-1 text-[10px] text-muted">
+                                <MapPin className="h-3 w-3" />
+                                {item.result!.location.lat.toFixed(5)}°,{" "}
+                                {item.result!.location.lng.toFixed(5)}°
+                              </span>
+                            )}
+                            {item.result!.detectedAt && (
+                              <span className="flex items-center gap-1 text-[10px] text-muted">
+                                <Clock className="h-3 w-3" />
+                                {new Date(item.result!.detectedAt).toLocaleString()}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
 

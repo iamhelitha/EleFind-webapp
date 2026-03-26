@@ -9,6 +9,8 @@ import {
   ZoomIn,
   X,
   Maximize2,
+  MapPin,
+  Clock,
 } from "lucide-react";
 import Card from "@/components/ui/Card";
 import ConfidenceChart from "./ConfidenceChart";
@@ -39,6 +41,8 @@ export default function DetectionResults({ result }: DetectionResultsProps) {
     minConfidence,
     confidences,
     detectionTable,
+    location,
+    detectedAt,
   } = result;
 
   const [lightbox, setLightbox] = useState(false);
@@ -129,6 +133,33 @@ export default function DetectionResults({ result }: DetectionResultsProps) {
           accent="bg-risk-medium/10"
         />
       </div>
+
+      {/* ─── Location & Date Info ─────────────────────────────── */}
+      {(location || detectedAt) && (
+        <div className="flex flex-wrap items-center gap-4 px-1">
+          {location && (
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <MapPin className="h-4 w-4 text-green-700" />
+              <span>
+                {location.lat.toFixed(5)}° {location.lat >= 0 ? "N" : "S"},{" "}
+                {location.lng.toFixed(5)}° {location.lng >= 0 ? "E" : "W"}
+              </span>
+            </div>
+          )}
+          {!location && (
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <MapPin className="h-4 w-4 text-amber-500" />
+              <span>No GPS data in image EXIF</span>
+            </div>
+          )}
+          {detectedAt && (
+            <div className="flex items-center gap-2 text-sm text-muted">
+              <Clock className="h-4 w-4 text-green-700" />
+              <span>{new Date(detectedAt).toLocaleString()}</span>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ─── Chart + Table side by side ──────────────────────── */}
       {elephantCount > 0 && (

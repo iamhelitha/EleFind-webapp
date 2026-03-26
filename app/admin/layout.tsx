@@ -1,13 +1,6 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { auth } from "@/auth";
-
-const ADMIN_NAV = [
-  { href: "/admin", label: "Dashboard", icon: "◉" },
-  { href: "/admin/detections", label: "Detections", icon: "🐘" },
-  { href: "/admin/crossings", label: "Crossing Zones", icon: "⬡" },
-  { href: "/admin/users", label: "Officers", icon: "👤", disabled: true },
-];
+import AdminSidebarNav from "./_components/AdminSidebarNav";
 
 export default async function AdminLayout({
   children,
@@ -21,52 +14,24 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex min-h-[calc(100vh-4rem)]">
+    <div className="flex" style={{ minHeight: "calc(100vh - 4rem)" }}>
       {/* Sidebar */}
-      <aside className="w-56 shrink-0 bg-green-900 text-green-100">
-        <div className="p-4 border-b border-green-800">
-          <p className="text-xs font-semibold text-green-400 uppercase tracking-wider">
+      <aside className="w-52 shrink-0 bg-green-900 flex flex-col">
+        <div className="px-4 py-3 border-b border-green-800">
+          <p className="text-[10px] font-bold text-green-400 uppercase tracking-widest">
             Admin Panel
           </p>
-          <p className="text-sm text-green-200 mt-1 truncate">
+          <p className="text-xs text-green-200 mt-0.5 truncate font-medium">
             {session.user.name ?? session.user.email}
           </p>
         </div>
-        <nav className="p-3 space-y-1">
-          {ADMIN_NAV.map(({ href, label, icon, disabled }) =>
-            disabled ? (
-              <div
-                key={href}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-green-600 cursor-not-allowed"
-              >
-                <span>{icon}</span>
-                <span>{label}</span>
-                <span className="ml-auto text-xs">Soon</span>
-              </div>
-            ) : (
-              <Link
-                key={href}
-                href={href}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-green-200 hover:bg-green-800 hover:text-white transition-colors"
-              >
-                <span>{icon}</span>
-                <span>{label}</span>
-              </Link>
-            )
-          )}
-        </nav>
-        <div className="p-3 border-t border-green-800 mt-auto">
-          <Link
-            href="/crossings"
-            className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-green-400 hover:text-green-200 transition-colors"
-          >
-            ← Back to app
-          </Link>
-        </div>
+        <AdminSidebarNav />
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 bg-gray-50 p-6 overflow-auto">{children}</main>
+      <main className="flex-1 min-w-0 bg-gray-50 overflow-auto">
+        <div className="p-5">{children}</div>
+      </main>
     </div>
   );
 }

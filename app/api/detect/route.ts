@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { runDetection } from "@/lib/gradio-client";
 import { persistDetectionAsync } from "@/lib/persist-detection";
+import { extractCoordsFromExif } from "@/lib/geo";
 import type { DetectionApiResponse } from "@/types";
 
 /** Maximum image upload size: 50 MB. */
@@ -57,8 +58,12 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
     const overlapRatio = parseFloat(formData.get("overlapRatio") as string) || 0.30;
     const iouThreshold = parseFloat(formData.get("iouThreshold") as string) || 0.40;
 
-    // Convert File → Blob for the Gradio client
-    const blob = new Blob([await file.arrayBuffer()], { type: file.type });
+    // Extract EXIF coordinates from the image
+    const fileBuffer = Buffer.from(await file.arrayBuffer());
+    const coords = await extractCoordsFromExif(fileBuffer);
+
+    // Re-create blob since we consumed the arrayBuffer
+    const blob = new Blob([fileBuffer], { type: file.type });
 
     const result = await runDetection({
       image: blob,
@@ -68,6 +73,13 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
       iouThreshold,
     });
 
+    // Attach location and timestamp to result
+    const enrichedResult = {
+      ...result,
+      location: coords,
+      detectedAt: new Date().toISOString(),
+    };
+
     // Non-blocking — DB failure must never affect the detection response
     persistDetectionAsync(file, result, {
       confThreshold,
@@ -76,7 +88,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
       iouThreshold,
     }).catch((err) => console.error("[detect] persist failed:", err));
 
-    return NextResponse.json({ success: true, data: result });
+    return NextResponse.json({ success: true, data: enrichedResult });
   } catch (error) {
     console.error("[/api/detect] Inference failed:", error);
 

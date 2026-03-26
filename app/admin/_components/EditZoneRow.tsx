@@ -65,31 +65,31 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
 
   if (editing) {
     return (
-      <tr className="bg-green-50">
-        <td className="px-4 py-2" colSpan={5}>
-          <div className="flex flex-wrap gap-3 items-end">
-            <div className="flex-1 min-w-[160px]">
-              <label className="block text-xs text-muted mb-1">Name</label>
+      <tr className="bg-green-50/60">
+        <td className="px-3 py-2.5" colSpan={5}>
+          <div className="flex flex-wrap gap-2.5 items-end">
+            <div className="flex-1 min-w-[140px]">
+              <label className="block text-[10px] font-semibold text-muted uppercase tracking-wide mb-1">Name</label>
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded border border-card-border px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="w-full rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none"
               />
             </div>
-            <div className="flex-1 min-w-[160px]">
-              <label className="block text-xs text-muted mb-1">Description</label>
+            <div className="flex-1 min-w-[140px]">
+              <label className="block text-[10px] font-semibold text-muted uppercase tracking-wide mb-1">Description</label>
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full rounded border border-card-border px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="w-full rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-xs text-muted mb-1">Risk</label>
+              <label className="block text-[10px] font-semibold text-muted uppercase tracking-wide mb-1">Risk</label>
               <select
                 value={riskLevel}
                 onChange={(e) => setRiskLevel(e.target.value)}
-                className="rounded border border-card-border px-2 py-1 text-sm focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
               >
                 {RISK_LEVELS.map((r) => (
                   <option key={r} value={r}>
@@ -102,13 +102,13 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="rounded px-3 py-1 text-sm font-semibold bg-green-700 text-white hover:bg-green-800 disabled:opacity-50"
+                className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-green-700 text-white hover:bg-green-800 disabled:opacity-50 transition-colors"
               >
-                {loading ? "…" : "Save"}
+                {loading ? "Saving…" : "Save"}
               </button>
               <button
                 onClick={() => setEditing(false)}
-                className="rounded px-3 py-1 text-sm border border-card-border text-muted hover:border-green-300"
+                className="rounded-lg px-3 py-1.5 text-xs border border-card-border text-muted hover:border-green-300 transition-colors"
               >
                 Cancel
               </button>
@@ -120,36 +120,36 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
   }
 
   return (
-    <tr className="hover:bg-gray-50 border-b border-gray-100">
-      <td className="px-4 py-3 text-sm font-medium text-green-900">{zone.name}</td>
-      <td className="px-4 py-3">
+    <tr className="hover:bg-gray-50 transition-colors">
+      <td className="px-3 py-2.5 font-medium text-green-900">{zone.name}</td>
+      <td className="px-3 py-2.5">
         <span
-          className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-            RISK_BADGE[zone.risk_level] ?? ""
+          className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
+            RISK_BADGE[zone.risk_level] ?? "bg-gray-100 text-gray-600"
           }`}
         >
           {zone.risk_level}
         </span>
       </td>
-      <td className="px-4 py-3 text-sm text-muted">{zone.confirmation_count}</td>
-      <td className="px-4 py-3">
-        <span className={`text-xs ${cred.cls}`}>{cred.label}</span>
+      <td className="px-3 py-2.5 text-muted text-center">{zone.confirmation_count}</td>
+      <td className="px-3 py-2.5">
+        <span className={`text-[11px] ${cred.cls}`}>{cred.label}</span>
       </td>
-      <td className="px-4 py-3 text-xs text-muted">
+      <td className="px-3 py-2.5 text-muted whitespace-nowrap">
         {new Date(zone.created_at).toLocaleDateString()}
       </td>
-      <td className="px-4 py-3">
-        <div className="flex gap-2">
+      <td className="px-3 py-2.5">
+        <div className="flex gap-1.5">
           <button
             onClick={() => setEditing(true)}
-            className="rounded px-2 py-1 text-xs font-medium text-green-700 hover:bg-green-50 border border-green-200 transition-colors"
+            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-green-700 hover:bg-green-50 border border-green-200 transition-colors"
           >
             Edit
           </button>
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 disabled:opacity-50 transition-colors"
+            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 border border-red-200 disabled:opacity-50 transition-colors"
           >
             {loading ? "…" : "Delete"}
           </button>

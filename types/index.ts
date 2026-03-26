@@ -42,6 +42,10 @@ export interface DetectionResult {
   confidences: number[];
   /** Raw table data: each row is [label, confidence, x1, y1, x2, y2]. */
   detectionTable: Array<Record<string, unknown>> | null;
+  /** Location extracted from image EXIF data (null if not available). */
+  location?: { lat: number; lng: number } | null;
+  /** ISO timestamp when detection was processed. */
+  detectedAt?: string;
 }
 
 /** Shape of the JSON returned by /api/detect to the frontend. */

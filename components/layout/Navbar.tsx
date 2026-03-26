@@ -16,7 +16,6 @@ const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/detect", label: "Detect" },
   { href: "/map", label: "Map" },
-  { href: "/crossings", label: "Crossings" },
 ] as const;
 
 export default function Navbar() {
