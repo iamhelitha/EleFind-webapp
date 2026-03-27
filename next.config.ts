@@ -22,6 +22,9 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  /** Prevent Next.js from bundling pg — it needs native net/tls modules. */
+  serverExternalPackages: ["pg"],
+
   /**
    * Allow images from Hugging Face Spaces (annotated result images)
    * and OpenStreetMap tile servers.
