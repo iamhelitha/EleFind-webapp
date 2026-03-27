@@ -240,6 +240,7 @@ export default function MapPageContent({
           userLocation={userLocation}
           drawingEnabled={isDrawingMode}
           onZoneDrawn={handleZoneDrawn}
+          onDrawError={(msg) => toast.error(msg)}
           focusBoundary={focusBoundary}
           focusPoint={focusPoint}
         />

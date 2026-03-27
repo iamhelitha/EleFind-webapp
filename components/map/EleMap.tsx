@@ -21,6 +21,9 @@ import type { MapDetection, CrossingZone, MapFilters, LatLngTuple } from "@/type
  * `ssr: false` because Leaflet directly accesses `window`.
  */
 
+/** Maximum allowed side length for a crossing zone rectangle (metres). */
+const MAX_ZONE_SIDE_M = 1_000; // 1 km
+
 interface EleMapProps {
   detections: MapDetection[];
   crossingZones: CrossingZone[];
@@ -31,6 +34,8 @@ interface EleMapProps {
   /** Drawing mode for creating crossing zones */
   drawingEnabled?: boolean;
   onZoneDrawn?: (polygon: GeoJSON.Polygon) => void;
+  /** Called when the drawn rectangle exceeds the size limit */
+  onDrawError?: (message: string) => void;
   /** Boundary to fly to (e.g. selected crossing zone) */
   focusBoundary?: LatLngTuple[] | null;
   /** Single point to fly to (e.g. selected detection) */
@@ -68,13 +73,15 @@ function FlyToPoint({ lat, lng }: { lat: number; lng: number }) {
   return null;
 }
 
-/** Leaflet Draw control for rectangle drawing. */
+/** Leaflet Draw control for rectangle drawing with a size limit. */
 function DrawControl({
   enabled,
   onZoneDrawn,
+  onDrawError,
 }: {
   enabled: boolean;
   onZoneDrawn: (polygon: GeoJSON.Polygon) => void;
+  onDrawError?: (message: string) => void;
 }) {
   const map = useMap();
 
@@ -106,8 +113,35 @@ function DrawControl({
 
     function onCreated(e: L.LeafletEvent) {
       const ev = e as unknown as {
-        layer: L.Layer & { toGeoJSON(): GeoJSON.Feature };
+        layer: L.Layer & {
+          toGeoJSON(): GeoJSON.Feature;
+          getBounds(): L.LatLngBounds;
+        };
       };
+
+      const bounds = ev.layer.getBounds();
+      const sw = bounds.getSouthWest();
+      const ne = bounds.getNorthEast();
+
+      // Measure east-west width and north-south height in metres
+      const widthM = sw.distanceTo(L.latLng(sw.lat, ne.lng));
+      const heightM = sw.distanceTo(L.latLng(ne.lat, sw.lng));
+
+      if (widthM > MAX_ZONE_SIDE_M || heightM > MAX_ZONE_SIDE_M) {
+        // Discard the oversized shape and notify the user
+        drawnItems.removeLayer(ev.layer);
+        const wKm = (widthM / 1000).toFixed(1);
+        const hKm = (heightM / 1000).toFixed(1);
+        onDrawError?.(
+          `Zone is too large (${wKm} × ${hKm} km). ` +
+          `Maximum allowed size is ${MAX_ZONE_SIDE_M / 1000} × ${MAX_ZONE_SIDE_M / 1000} km.`
+        );
+        return;
+      }
+
+      // Add to feature group so the edit toolbar can manage it
+      drawnItems.addLayer(ev.layer);
+
       const geometry = ev.layer.toGeoJSON().geometry as GeoJSON.Polygon;
       onZoneDrawn(geometry);
     }
@@ -119,7 +153,7 @@ function DrawControl({
       map.removeControl(drawControl);
       map.removeLayer(drawnItems);
     };
-  }, [map, enabled, onZoneDrawn]);
+  }, [map, enabled, onZoneDrawn, onDrawError]);
 
   return null;
 }
@@ -132,6 +166,7 @@ export default function EleMap({
   userLocation,
   drawingEnabled = false,
   onZoneDrawn,
+  onDrawError,
   focusBoundary = null,
   focusPoint = null,
 }: EleMapProps) {
@@ -177,7 +212,11 @@ export default function EleMap({
 
       {/* Drawing control */}
       {drawingEnabled && onZoneDrawn && (
-        <DrawControl enabled={drawingEnabled} onZoneDrawn={onZoneDrawn} />
+        <DrawControl
+          enabled={drawingEnabled}
+          onZoneDrawn={onZoneDrawn}
+          onDrawError={onDrawError}
+        />
       )}
 
       {/* Focus handlers */}
