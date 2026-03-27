@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import toast from "react-hot-toast";
-import { Activity, MapPin, SlidersHorizontal } from "lucide-react";
+import { Activity, MapPin, SlidersHorizontal, RefreshCw } from "lucide-react";
 
 import InfoPanel from "./panels/InfoPanel";
 import LayerToggle from "./controls/LayerToggle";
@@ -72,7 +72,10 @@ export default function MapPageContent({
   const [filters, setFilters] = useState<MapFilters>(getDefaultFilters);
 
   // Data state
+  const [detections, setDetections] = useState<MapDetection[]>(initialDetections);
   const [crossingZones, setCrossingZones] = useState<CrossingZone[]>(initialCrossings);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const lastFetchRef = useRef<number>(Date.now());
 
   // User location state
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -86,6 +89,35 @@ export default function MapPageContent({
   // Focus state
   const [focusBoundary, setFocusBoundary] = useState<[number, number][] | null>(null);
   const [focusPoint, setFocusPoint] = useState<{ lat: number; lng: number } | null>(null);
+
+  // Live refresh: fetch latest detections
+  const refreshDetections = useCallback(async (silent = true) => {
+    if (!silent) setIsRefreshing(true);
+    try {
+      const now = new Date();
+      const oneYearAgo = new Date(now);
+      oneYearAgo.setFullYear(now.getFullYear() - 1);
+      const res = await fetch(
+        `/api/detections?dateFrom=${oneYearAgo.toISOString()}`,
+        { cache: "no-store" }
+      );
+      if (res.ok) {
+        const data: MapDetection[] = await res.json();
+        setDetections(data);
+        lastFetchRef.current = Date.now();
+      }
+    } catch {
+      // Silent failure — stale data is better than an error toast
+    } finally {
+      if (!silent) setIsRefreshing(false);
+    }
+  }, []);
+
+  // Poll every 30 seconds for new detections
+  useEffect(() => {
+    const id = setInterval(() => refreshDetections(true), 30_000);
+    return () => clearInterval(id);
+  }, [refreshDetections]);
 
   // Handlers
   const updateFilter = (patch: Partial<MapFilters>) =>
@@ -132,15 +164,12 @@ export default function MapPageContent({
     setShowAddModal(true);
   }, []);
 
-  // Metrics
-  const totalDetections = initialDetections.length;
-  const totalElephants = initialDetections.reduce(
-    (sum, d) => sum + d.elephantCount,
-    0
-  );
+  // Metrics (computed from live detections state)
+  const totalDetections = detections.length;
+  const totalElephants = detections.reduce((sum, d) => sum + d.elephantCount, 0);
   const avgConfidence =
     totalDetections > 0
-      ? initialDetections.reduce((sum, d) => sum + d.confidence, 0) / totalDetections
+      ? detections.reduce((sum, d) => sum + d.confidence, 0) / totalDetections
       : 0;
 
   const sidebarContent = (
@@ -161,8 +190,10 @@ export default function MapPageContent({
       isDrawingMode={isDrawingMode}
       onToggleDrawing={() => setIsDrawingMode((v) => !v)}
       onAddZone={handleAddZoneClick}
-      detections={initialDetections}
+      detections={detections}
       onSelectDetection={handleSelectDetection}
+      isRefreshing={isRefreshing}
+      onRefresh={() => refreshDetections(false)}
     />
   );
 
@@ -203,7 +234,7 @@ export default function MapPageContent({
       {/* ── Map (takes remaining space) ── */}
       <div className="flex-1 relative">
         <EleMap
-          detections={initialDetections}
+          detections={detections}
           crossingZones={crossingZones}
           filters={filters}
           userLocation={userLocation}
@@ -270,6 +301,8 @@ interface SidebarContentProps {
   onAddZone: () => void;
   detections: MapDetection[];
   onSelectDetection: (detection: MapDetection) => void;
+  isRefreshing: boolean;
+  onRefresh: () => void;
 }
 
 function SidebarContent({
@@ -291,14 +324,28 @@ function SidebarContent({
   onAddZone,
   detections,
   onSelectDetection,
+  isRefreshing,
+  onRefresh,
 }: SidebarContentProps) {
   return (
     <>
-      {/* My Location */}
-      <UserLocationButton
-        onLocationFound={onLocationFound}
-        onError={onLocationError}
-      />
+      {/* My Location + Refresh */}
+      <div className="flex gap-2">
+        <div className="flex-1">
+          <UserLocationButton
+            onLocationFound={onLocationFound}
+            onError={onLocationError}
+          />
+        </div>
+        <button
+          onClick={onRefresh}
+          disabled={isRefreshing}
+          title="Refresh detections"
+          className="flex items-center justify-center rounded-lg border border-card-border bg-card-bg px-2.5 py-1.5 text-xs text-green-700 hover:bg-green-50 disabled:opacity-50 transition-colors"
+        >
+          <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
+        </button>
+      </div>
 
       {/* Metrics */}
       <div className="grid grid-cols-2 gap-2">

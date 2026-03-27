@@ -1,16 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
 import crypto from "crypto";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
 export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const ip = getClientIp(req);
+
+  // Rate limit: 5 confirms per minute per IP
+  if (!rateLimit(`confirm:detection:${ip}`, 5, 60_000)) {
+    return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+  }
+
   try {
     const { id: detectionId } = await params;
 
-    const ip =
-      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
     const ipHash = crypto
       .createHash("sha256")
       .update(ip + (process.env.AUTH_SECRET ?? ""))
@@ -42,8 +48,7 @@ export async function POST(
     );
 
     return NextResponse.json({ ok: true, confirmationCount: rows[0]?.confirmation_count ?? 1 });
-  } catch (error) {
-    console.error("[detections confirm POST]", error);
+  } catch {
     return NextResponse.json({ error: "Failed to confirm." }, { status: 500 });
   }
 }

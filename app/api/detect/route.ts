@@ -10,9 +10,11 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
 import { runDetection } from "@/lib/gradio-client";
 import { persistDetectionAsync } from "@/lib/persist-detection";
 import { extractCoordsFromExif } from "@/lib/geo";
+import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import type { DetectionApiResponse } from "@/types";
 
 /** Maximum image upload size: 50 MB. */
@@ -25,6 +27,24 @@ const ACCEPTED_TYPES = new Set([
 ]);
 
 export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiResponse>> {
+  // Require authentication — detection triggers HF Space usage and DB writes
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.json(
+      { success: false, error: "Sign in to use detection." },
+      { status: 401 }
+    );
+  }
+
+  // Rate limit: 10 detections per minute per user
+  const userId = session.user.id ?? getClientIp(req);
+  if (!rateLimit(`detect:${userId}`, 10, 60_000)) {
+    return NextResponse.json(
+      { success: false, error: "Too many requests. Please wait a moment before detecting again." },
+      { status: 429 }
+    );
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get("image") as File | null;
@@ -76,7 +96,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
     // Attach location and timestamp to result
     const enrichedResult = {
       ...result,
-      location: coords,
+      location: coords ?? undefined,
       detectedAt: new Date().toISOString(),
     };
 
@@ -86,17 +106,20 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
       sliceSize,
       overlapRatio,
       iouThreshold,
-    }).catch((err) => console.error("[detect] persist failed:", err));
+    }).catch(() => {
+      // Persist failure is silent to the user; logged inside persistDetectionAsync
+    });
 
     return NextResponse.json({ success: true, data: enrichedResult });
   } catch (error) {
-    console.error("[/api/detect] Inference failed:", error);
+    // Provide a user-friendly message without leaking internals
+    const isUnavailable =
+      error instanceof Error &&
+      (error.message.includes("Could not") || error.message.includes("fetch"));
 
-    // Provide a user-friendly message when HF Spaces is down
-    const message =
-      error instanceof Error && error.message.includes("Could not")
-        ? "Inference engine temporarily unavailable. The detection model runs on Hugging Face Spaces free tier — please try again in a moment."
-        : "Detection failed. Please try again.";
+    const message = isUnavailable
+      ? "Inference engine temporarily unavailable. The detection model runs on Hugging Face Spaces free tier — please wait ~30 seconds for it to wake up, then try again."
+      : "Detection failed. Please try again.";
 
     return NextResponse.json(
       { success: false, error: message },

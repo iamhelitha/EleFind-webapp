@@ -1,8 +1,10 @@
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Map, Users, Camera, ArrowRight, Activity, Radar } from "lucide-react";
 import Card from "@/components/ui/Card";
 import HeroMapSection from "@/components/home/HeroMapSection";
+import pool from "@/lib/db";
 
 /**
  * Landing page for EleFind.
@@ -11,7 +13,7 @@ import HeroMapSection from "@/components/home/HeroMapSection";
  *  1. Hero — text on left, interactive fading map on right (clickable → /map)
  *  2. Problem statement — human-elephant conflict in Sri Lanka
  *  3. Feature cards — Detect, Map, Contribute
- *  4. Stats counter (mock data for demo phase)
+ *  4. Stats counter (fetched from database)
  *  5. Call to action
  */
 
@@ -42,13 +44,63 @@ const FEATURES = [
   },
 ] as const;
 
-const STATS = [
-  { label: "Detections Made", value: "1,240+", icon: Radar },
-  { label: "Crossing Zones Mapped", value: "38", icon: Map },
-  { label: "Avg. Confidence", value: "87.3%", icon: Activity },
-] as const;
+interface Stat {
+  label: string;
+  value: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+}
 
-export default function Home() {
+async function fetchStats(): Promise<Stat[]> {
+  try {
+    // Fetch detection count and average confidence
+    const detectionsResult = await pool.query(
+      `SELECT COUNT(*) as count, AVG(confidence) as avg_confidence
+       FROM detections
+       WHERE NOT (lat = 0 AND lng = 0)`
+    );
+
+    const detectionCount = parseInt(detectionsResult.rows[0]?.count ?? "0", 10);
+    const avgConfidence = detectionsResult.rows[0]?.avg_confidence
+      ? parseFloat(detectionsResult.rows[0].avg_confidence)
+      : 0;
+
+    // Fetch crossing zones count
+    const crossingsResult = await pool.query(
+      `SELECT COUNT(*) as count FROM crossing_zones`
+    );
+
+    const crossingCount = parseInt(crossingsResult.rows[0]?.count ?? "0", 10);
+
+    return [
+      {
+        label: "Detections Made",
+        value: detectionCount.toLocaleString(),
+        icon: Radar,
+      },
+      {
+        label: "Crossing Zones Mapped",
+        value: crossingCount.toLocaleString(),
+        icon: Map,
+      },
+      {
+        label: "Avg. Confidence",
+        value: `${(avgConfidence * 100).toFixed(1)}%`,
+        icon: Activity,
+      },
+    ];
+  } catch (error) {
+    console.error("Failed to fetch stats:", error);
+    // Return empty stats on error instead of hardcoded values
+    return [
+      { label: "Detections Made", value: "—", icon: Radar },
+      { label: "Crossing Zones Mapped", value: "—", icon: Map },
+      { label: "Avg. Confidence", value: "—", icon: Activity },
+    ];
+  }
+}
+
+export default async function Home() {
+  const stats = await fetchStats();
   return (
     <div className="animate-fade-in">
       {/* ─── Hero with Map Background ────────────────────────── */}
@@ -149,7 +201,7 @@ export default function Home() {
       <section className="bg-green-100/50 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-8 sm:grid-cols-3">
-            {STATS.map(({ label, value, icon: Icon }) => (
+            {stats.map(({ label, value, icon: Icon }) => (
               <div key={label} className="flex flex-col items-center text-center">
                 <Icon className="h-8 w-8 text-green-700 mb-2" />
                 <span className="font-heading text-3xl font-bold text-green-900">
