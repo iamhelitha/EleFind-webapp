@@ -43,23 +43,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === "google") {
-        // Upsert Google user into the database
         const email = user.email;
         if (!email) return false;
 
-        const existing = await pool.query(
-          "SELECT * FROM users WHERE email = $1",
-          [email]
-        );
-
-        if (existing.rows.length === 0) {
-          // Create new user from Google sign-in (public role)
-          const id = crypto.randomUUID();
-          await pool.query(
-            `INSERT INTO users (id, email, name, password_hash, role)
-             VALUES ($1, $2, $3, $4, $5)`,
-            [id, email, user.name ?? email.split("@")[0], "google-oauth", "public"]
+        try {
+          const existing = await pool.query(
+            "SELECT * FROM users WHERE email = $1",
+            [email]
           );
+
+          if (existing.rows.length === 0) {
+            const id = crypto.randomUUID();
+            await pool.query(
+              `INSERT INTO users (id, email, name, password_hash, role)
+               VALUES ($1, $2, $3, $4, $5)`,
+              [id, email, user.name ?? email.split("@")[0], "google-oauth", "public"]
+            );
+          }
+        } catch (err) {
+          console.error("[auth] Google signIn DB error:", err);
+          return false;
         }
       }
       return true;
