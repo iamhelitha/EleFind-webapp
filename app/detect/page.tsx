@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import toast from "react-hot-toast";
+import exifr from "exifr";
 import {
   Camera,
   Cpu,
@@ -17,10 +18,10 @@ import {
 import ImageUploader from "@/components/detection/ImageUploader";
 import DetectionResults from "@/components/detection/DetectionResults";
 import Card from "@/components/ui/Card";
+import { runDetectionFromBrowser } from "@/lib/gradio-browser";
 import type {
   BatchItem,
   SahiParams,
-  DetectionApiResponse,
 } from "@/types";
 
 /**
@@ -48,8 +49,11 @@ export default function DetectPage() {
 
   /**
    * Run detection on all pending items sequentially.
-   * Each image is sent to /api/detect one at a time and its status is
-   * updated in the queue in real-time.
+   *
+   * Images are sent directly from the browser to HF Spaces via @gradio/client,
+   * bypassing the Next.js API route and its 4.5 MB serverless payload limit.
+   * Auth + rate limiting are checked via GET /api/detect/authorize (no image).
+   * Results are persisted via POST /api/detect/persist (small JSON payload).
    */
   const runBatch = useCallback(
     async (pending: BatchItem[], params: SahiParams) => {
@@ -59,15 +63,14 @@ export default function DetectPage() {
         const item = pending[pi];
 
         // Find the index of this item in the full queue for UI highlighting.
-        // We use a functional read of the latest state to avoid stale closure.
         let itemIndex = pi;
         setItems((prev) => {
           itemIndex = prev.findIndex((it) => it.id === item.id);
-          return prev; // no mutation, just reading
+          return prev;
         });
         setCurrentIndex(itemIndex);
 
-        // Update status → uploading
+        // Update status → uploading (auth check phase)
         setItems((prev) =>
           prev.map((it) =>
             it.id === item.id ? { ...it, status: "uploading", errorMessage: undefined } : it
@@ -75,12 +78,19 @@ export default function DetectPage() {
         );
 
         try {
-          const formData = new FormData();
-          formData.append("image", item.file);
-          formData.append("confThreshold", params.confThreshold.toString());
-          formData.append("sliceSize", params.sliceSize.toString());
-          formData.append("overlapRatio", params.overlapRatio.toString());
-          formData.append("iouThreshold", params.iouThreshold.toString());
+          // Step 1: Validate session + apply rate limit. Returns the HF Space ID.
+          const authRes = await fetch("/api/detect/authorize");
+          const authJson = await authRes.json();
+          if (!authJson.success) {
+            throw new Error(authJson.error ?? "Authorization failed");
+          }
+          const spaceId: string = authJson.spaceId;
+
+          // Step 2: Extract GPS from EXIF in the browser (exifr works client-side).
+          const gps = await exifr.gps(item.file).catch(() => null);
+          const location = gps?.latitude != null && gps?.longitude != null
+            ? { lat: gps.latitude, lng: gps.longitude }
+            : null;
 
           // Update status → connecting
           setItems((prev) =>
@@ -89,51 +99,77 @@ export default function DetectPage() {
             )
           );
 
-          const res = await fetch("/api/detect", {
-            method: "POST",
-            body: formData,
+          // Step 3: Send image directly to HF Spaces from the browser.
+          const result = await runDetectionFromBrowser(spaceId, {
+            image: item.file,
+            confThreshold: params.confThreshold,
+            sliceSize: params.sliceSize,
+            overlapRatio: params.overlapRatio,
+            iouThreshold: params.iouThreshold,
           });
 
-          // Update status → detecting
+          // Update status → detecting → processing (brief visual feedback)
           setItems((prev) =>
             prev.map((it) =>
               it.id === item.id ? { ...it, status: "detecting" } : it
             )
           );
+          await new Promise((r) => setTimeout(r, 300));
 
-          const json: DetectionApiResponse = await res.json();
-
-          if (!json.success || !json.data) {
-            throw new Error(json.error ?? "Unknown error");
-          }
-
-          // Update status → processing (brief)
           setItems((prev) =>
             prev.map((it) =>
               it.id === item.id ? { ...it, status: "processing" } : it
             )
           );
-          await new Promise((r) => setTimeout(r, 300));
 
-          // Update status → done with result
+          const enrichedResult = {
+            ...result,
+            location: location ?? undefined,
+            detectedAt: new Date().toISOString(),
+          };
+
+          // Update status → done
           setItems((prev) =>
             prev.map((it) =>
               it.id === item.id
-                ? { ...it, status: "done", result: json.data! }
+                ? { ...it, status: "done", result: enrichedResult }
                 : it
             )
           );
 
-          // Auto-expand the first completed item
           setExpandedItem((prev) => prev ?? item.id);
 
-          if (json.data.elephantCount > 0) {
+          if (result.elephantCount > 0) {
             toast.success(
-              `${item.file.name}: ${json.data.elephantCount} elephant${json.data.elephantCount > 1 ? "s" : ""} detected`
+              `${item.file.name}: ${result.elephantCount} elephant${result.elephantCount > 1 ? "s" : ""} detected`
             );
           }
+
+          // Step 4: Persist to DB (fire-and-forget, small JSON payload).
+          fetch("/api/detect/persist", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              result,
+              location,
+              params,
+              fileName: item.file.name,
+              fileSize: item.file.size,
+            }),
+          }).catch(() => {
+            // Persist failure is silent — never affects the detection result.
+          });
         } catch (err) {
-          const msg = err instanceof Error ? err.message : "Detection failed";
+          const isUnavailable =
+            err instanceof Error &&
+            (err.message.includes("Could not") || err.message.includes("fetch"));
+
+          const msg = isUnavailable
+            ? "Inference engine temporarily unavailable. The detection model runs on Hugging Face Spaces free tier — please wait ~30 seconds for it to wake up, then try again."
+            : err instanceof Error
+              ? err.message
+              : "Detection failed";
+
           setItems((prev) =>
             prev.map((it) =>
               it.id === item.id

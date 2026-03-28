@@ -170,12 +170,18 @@ export default function EleMap({
   focusBoundary = null,
   focusPoint = null,
 }: EleMapProps) {
-  // Apply filters
+  // Apply filters.
+  // d.detectedAt is a full ISO timestamp ("2026-03-27T10:57:00.000Z").
+  // filters.dateFrom / dateTo are date-only strings ("2026-03-27").
+  // Comparing them directly with > / < gives wrong results because the
+  // ISO string is lexicographically "greater than" the same date-only string.
+  // Fix: slice the timestamp to its date portion before comparing.
   const visibleDetections = filters.showDetections
     ? detections.filter((d) => {
         if (d.confidence < filters.minConfidence) return false;
-        if (filters.dateFrom && d.detectedAt < filters.dateFrom) return false;
-        if (filters.dateTo && d.detectedAt > filters.dateTo) return false;
+        const dateOnly = d.detectedAt.slice(0, 10); // "YYYY-MM-DD"
+        if (filters.dateFrom && dateOnly < filters.dateFrom) return false;
+        if (filters.dateTo && dateOnly > filters.dateTo) return false;
         return true;
       })
     : [];

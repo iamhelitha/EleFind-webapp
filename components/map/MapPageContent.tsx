@@ -13,6 +13,7 @@ import MetricsCard from "./controls/MetricsCard";
 import UserLocationButton from "./controls/UserLocationButton";
 import NearestDetectionsPanel from "./panels/NearestDetectionsPanel";
 import CrossingZonesPanel from "./panels/CrossingZonesPanel";
+import DetectionsListPanel from "./panels/DetectionsListPanel";
 import AddZoneModal from "@/components/crossings/AddZoneModal";
 import Spinner from "@/components/ui/Spinner";
 import type { MapDetection, CrossingZone, MapFilters } from "@/types";
@@ -89,6 +90,7 @@ export default function MapPageContent({
   // Focus state
   const [focusBoundary, setFocusBoundary] = useState<[number, number][] | null>(null);
   const [focusPoint, setFocusPoint] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedDetectionId, setSelectedDetectionId] = useState<string | null>(null);
 
   // Live refresh: fetch latest detections
   const refreshDetections = useCallback(async (silent = true) => {
@@ -141,6 +143,7 @@ export default function MapPageContent({
   }, []);
 
   const handleSelectDetection = useCallback((detection: MapDetection) => {
+    setSelectedDetectionId(detection.id);
     setFocusPoint({ lat: detection.latitude, lng: detection.longitude });
     setFocusBoundary(null);
     setMobileOpen(false);
@@ -191,6 +194,7 @@ export default function MapPageContent({
       onToggleDrawing={() => setIsDrawingMode((v) => !v)}
       onAddZone={handleAddZoneClick}
       detections={detections}
+      selectedDetectionId={selectedDetectionId}
       onSelectDetection={handleSelectDetection}
       isRefreshing={isRefreshing}
       onRefresh={() => refreshDetections(false)}
@@ -301,6 +305,7 @@ interface SidebarContentProps {
   onToggleDrawing: () => void;
   onAddZone: () => void;
   detections: MapDetection[];
+  selectedDetectionId: string | null;
   onSelectDetection: (detection: MapDetection) => void;
   isRefreshing: boolean;
   onRefresh: () => void;
@@ -324,6 +329,7 @@ function SidebarContent({
   onToggleDrawing,
   onAddZone,
   detections,
+  selectedDetectionId,
   onSelectDetection,
   isRefreshing,
   onRefresh,
@@ -435,6 +441,15 @@ function SidebarContent({
       />
 
       {/* Separator */}
+      <div className="border-t border-card-border" />
+
+      {/* All detections — always visible, click to fly to location */}
+      <DetectionsListPanel
+        detections={detections}
+        selectedId={selectedDetectionId}
+        onSelect={onSelectDetection}
+      />
+
       <div className="border-t border-card-border" />
 
       {/* Nearest detections (only when user location is available) */}
