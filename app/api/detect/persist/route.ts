@@ -7,7 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 import { persistDetectionFromData } from "@/lib/persist-detection";
 import type { DetectionResult, SahiParams } from "@/types";
 
@@ -20,8 +20,8 @@ interface PersistBody {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await auth();
-  if (!session?.user) {
+  const user = await getServerAuthUserFromRequest(req);
+  if (!user) {
     return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
   }
 

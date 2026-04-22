@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 import Spinner from "@/components/ui/Spinner";
+import { useAppAuth } from "@/components/providers/AuthProvider";
 import type { CrossingZone } from "@/types";
 
 interface AddZoneModalProps {
@@ -15,7 +15,7 @@ interface AddZoneModalProps {
 const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;
 
 export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneModalProps) {
-  const { data: session } = useSession();
+  const { user } = useAppAuth();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [riskLevel, setRiskLevel] = useState<string>("medium");
@@ -23,7 +23,7 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  if (!session?.user) {
+  if (!user) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
         <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl text-center">

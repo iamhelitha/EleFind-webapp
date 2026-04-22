@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/auth";
+import { getServerAuthUser } from "@/lib/server-auth";
 import AdminSidebarNav from "./_components/AdminSidebarNav";
 
 export default async function AdminLayout({
@@ -7,9 +7,9 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const user = await getServerAuthUser();
 
-  if (!session?.user || session.user.role !== "officer") {
+  if (!user || user.role !== "officer") {
     redirect("/login");
   }
 
@@ -22,7 +22,7 @@ export default async function AdminLayout({
             Admin Panel
           </p>
           <p className="text-xs text-green-200 mt-0.5 truncate font-medium">
-            {session.user.name ?? session.user.email}
+            {user.name ?? user.email}
           </p>
         </div>
         <AdminSidebarNav />

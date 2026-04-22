@@ -1,9 +1,9 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { Plus, PenTool } from "lucide-react";
 import Badge, { riskVariant } from "@/components/ui/Badge";
 import ConfirmButton from "@/components/ui/ConfirmButton";
+import { useAppAuth } from "@/components/providers/AuthProvider";
 import type { CrossingZone } from "@/types";
 
 /**
@@ -28,7 +28,7 @@ export default function CrossingZonesPanel({
   onToggleDrawing,
   onAddZone,
 }: CrossingZonesPanelProps) {
-  const { data: session } = useSession();
+  const { user } = useAppAuth();
 
   return (
     <div className="space-y-2">
@@ -36,7 +36,7 @@ export default function CrossingZonesPanel({
         <span className="text-xs font-semibold text-green-900">
           Crossing Zones ({zones.length})
         </span>
-        {session?.user && (
+        {user && (
           <div className="flex items-center gap-1.5">
             <button
               onClick={onToggleDrawing}

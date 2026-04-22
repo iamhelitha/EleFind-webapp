@@ -1,8 +1,30 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "next-auth/react";
+import Link from "next/link";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  type Auth,
+} from "firebase/auth";
 import Spinner from "@/components/ui/Spinner";
+import { getFirebaseAuth, getFirebaseGoogleProvider } from "@/lib/firebase-client";
+import { getFirebaseAuthErrorMessage } from "@/lib/firebase-auth-errors";
+
+async function exchangeFirebaseSession(idToken: string, provider: "password" | "google") {
+  const response = await fetch("/api/auth/session-login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ idToken, provider }),
+  });
+
+  if (!response.ok) {
+    const data = (await response.json().catch(() => ({}))) as { error?: string };
+    throw new Error(data.error ?? "Unable to establish session.");
+  }
+}
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,19 +37,23 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    let auth: Auth | undefined;
 
     try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (result?.error) {
-        setError("Invalid email or password.");
-      } else {
-        window.location.href = "/map";
+      auth = getFirebaseAuth();
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        email.trim(),
+        password
+      );
+      const idToken = await credential.user.getIdToken(true);
+      await exchangeFirebaseSession(idToken, "password");
+      window.location.href = "/map";
+    } catch (err) {
+      if (auth) {
+        await signOut(auth).catch(() => undefined);
       }
+      setError(getFirebaseAuthErrorMessage(err, "Unable to sign in. Please try again."));
     } finally {
       setLoading(false);
     }
@@ -36,7 +62,22 @@ export default function LoginPage() {
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
     setError(null);
-    await signIn("google", { callbackUrl: "/map" });
+    let auth: Auth | undefined;
+
+    try {
+      auth = getFirebaseAuth();
+      const credential = await signInWithPopup(auth, getFirebaseGoogleProvider());
+      const idToken = await credential.user.getIdToken(true);
+      await exchangeFirebaseSession(idToken, "google");
+      window.location.href = "/map";
+    } catch (err) {
+      if (auth) {
+        await signOut(auth).catch(() => undefined);
+      }
+      setError(getFirebaseAuthErrorMessage(err, "Google sign-in failed. Please try again."));
+    } finally {
+      setGoogleLoading(false);
+    }
   }
 
   return (
@@ -133,6 +174,11 @@ export default function LoginPage() {
                 className="w-full rounded-lg border border-card-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 placeholder="••••••••"
               />
+              <div className="mt-2 text-right">
+                <Link href="/forgot-password" className="text-xs font-medium text-green-700 hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             {error && (
@@ -156,14 +202,13 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
         </div>
 
         <p className="mt-4 text-center text-sm text-muted">
           Don't have an account?{" "}
-          <a href="/signup" className="text-green-700 hover:underline font-medium">
+          <Link href="/signup" className="text-green-700 hover:underline font-medium">
             Sign up
-          </a>
+          </Link>
         </p>
       </div>
     </div>

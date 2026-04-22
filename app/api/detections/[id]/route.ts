@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
-import { auth } from "@/auth";
+import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const session = await auth();
-  if (!session?.user || session.user.role !== "officer") {
+  const user = await getServerAuthUserFromRequest(_req);
+  if (!user || user.role !== "officer") {
     return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   }
 

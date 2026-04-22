@@ -2,12 +2,12 @@
 
 import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
-import { useSession } from "next-auth/react";
 import Card from "@/components/ui/Card";
 import Badge, { riskVariant } from "@/components/ui/Badge";
 import Spinner from "@/components/ui/Spinner";
 import ConfirmButton from "@/components/ui/ConfirmButton";
 import AddZoneModal from "@/components/crossings/AddZoneModal";
+import { useAppAuth } from "@/components/providers/AuthProvider";
 import type { CrossingZone, MapFilters } from "@/types";
 
 interface CrossingsPageContentProps {
@@ -37,7 +37,7 @@ const MAP_FILTERS: MapFilters = {
 export default function CrossingsPageContent({
   initialCrossings,
 }: CrossingsPageContentProps) {
-  const { data: session } = useSession();
+  const { user } = useAppAuth();
   const [zones, setZones] = useState<CrossingZone[]>(initialCrossings);
   const [selected, setSelected] = useState<CrossingZone | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -72,7 +72,7 @@ export default function CrossingsPageContent({
             Known elephant crossing areas with risk-level classification.
           </p>
         </div>
-        {session?.user && (
+        {user && (
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setIsDrawingMode((v) => !v)}

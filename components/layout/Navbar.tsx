@@ -4,8 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSession, signOut, signIn } from "next-auth/react";
 import { Menu, X, LogIn, LogOut, User } from "lucide-react";
+import { useAppAuth } from "@/components/providers/AuthProvider";
 
 /**
  * Top navigation bar with responsive mobile menu.
@@ -21,8 +21,8 @@ const NAV_LINKS = [
 export default function Navbar() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { data: session } = useSession();
-  const isOfficer = session?.user?.role === "officer";
+  const { user, signOut } = useAppAuth();
+  const isOfficer = user?.role === "officer";
 
   const linkClass = (href: string) => {
     const active = pathname === href || pathname.startsWith(href + "/") && href !== "/";
@@ -68,14 +68,14 @@ export default function Navbar() {
             </li>
           )}
           <li className="ml-2 pl-2 border-l border-card-border">
-            {session?.user ? (
+            {user ? (
               <div className="flex items-center gap-2">
                 <span className="flex items-center gap-1.5 text-xs text-muted">
                   <User className="h-3.5 w-3.5" />
-                  {session.user.name ?? session.user.email}
+                  {user.name ?? user.email}
                 </span>
                 <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
+                  onClick={() => void signOut()}
                   className="flex items-center gap-1.5 rounded-lg border border-card-border px-3 py-2 text-xs font-medium text-muted hover:border-green-300 hover:text-green-900 transition-colors"
                 >
                   <LogOut className="h-3.5 w-3.5" />
@@ -83,13 +83,13 @@ export default function Navbar() {
                 </button>
               </div>
             ) : (
-              <button
-                onClick={() => signIn()}
+              <Link
+                href="/login"
                 className="flex items-center gap-1.5 rounded-lg border border-green-700 px-3 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 transition-colors"
               >
                 <LogIn className="h-4 w-4" />
                 Sign in
-              </button>
+              </Link>
             )}
           </li>
         </ul>
@@ -131,14 +131,17 @@ export default function Navbar() {
               </li>
             )}
             <li className="pt-2 border-t border-card-border mt-1">
-              {session?.user ? (
+              {user ? (
                 <div className="flex items-center justify-between">
                   <span className="flex items-center gap-1.5 text-xs text-muted">
                     <User className="h-3.5 w-3.5" />
-                    {session.user.name ?? session.user.email}
+                    {user.name ?? user.email}
                   </span>
                   <button
-                    onClick={() => { signOut({ callbackUrl: "/" }); setMenuOpen(false); }}
+                    onClick={() => {
+                      void signOut();
+                      setMenuOpen(false);
+                    }}
                     className="flex items-center gap-1.5 rounded-lg border border-card-border px-3 py-2 text-xs font-medium text-muted hover:border-green-300 transition-colors"
                   >
                     <LogOut className="h-3.5 w-3.5" />
@@ -146,13 +149,14 @@ export default function Navbar() {
                   </button>
                 </div>
               ) : (
-                <button
-                  onClick={() => { signIn(); setMenuOpen(false); }}
+                <Link
+                  href="/login"
+                  onClick={() => setMenuOpen(false)}
                   className="flex w-full items-center justify-center gap-1.5 rounded-lg border border-green-700 px-4 py-2 text-sm font-semibold text-green-700 hover:bg-green-50 transition-colors"
                 >
                   <LogIn className="h-4 w-4" />
                   Sign in
-                </button>
+                </Link>
               )}
             </li>
           </ul>

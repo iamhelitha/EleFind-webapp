@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
-import { auth } from "@/auth";
+import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import type { CrossingZone } from "@/types";
 
@@ -62,13 +62,13 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   // Only officers can create crossing zones
-  const session = await auth();
-  if (!session?.user || session.user.role !== "officer") {
+  const user = await getServerAuthUserFromRequest(req);
+  if (!user || user.role !== "officer") {
     return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   }
 
   // Rate limit: 10 zone creations per minute per user
-  const userId = session.user.id ?? getClientIp(req);
+  const userId = user.id ?? getClientIp(req);
   if (!rateLimit(`crossings:post:${userId}`, 10, 60_000)) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }

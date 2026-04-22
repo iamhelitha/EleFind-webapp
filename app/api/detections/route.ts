@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import pool from "@/lib/db";
-import { auth } from "@/auth";
+import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 import type { MapDetection } from "@/types";
 
@@ -51,13 +51,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   // Require authentication
-  const session = await auth();
-  if (!session?.user) {
+  const user = await getServerAuthUserFromRequest(req);
+  if (!user) {
     return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   }
 
   // Rate limit: 20 detections per minute per user
-  const userId = session.user.id ?? getClientIp(req);
+  const userId = user.id ?? getClientIp(req);
   if (!rateLimit(`detections:post:${userId}`, 20, 60_000)) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }

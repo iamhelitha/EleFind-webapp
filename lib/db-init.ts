@@ -93,5 +93,30 @@ export async function initDb() {
     );
   `);
 
+  await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS firebase_uid TEXT UNIQUE;
+  `);
+
+  await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS email_verified BOOLEAN DEFAULT false;
+  `);
+
+  await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS auth_provider TEXT DEFAULT 'legacy';
+  `);
+
+  await pool.query(`
+    ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS last_login_at TIMESTAMPTZ;
+  `);
+
+  await pool.query(`
+    CREATE INDEX IF NOT EXISTS users_firebase_uid_idx
+      ON users(firebase_uid);
+  `);
+
   console.log("[db-init] Tables ready.");
 }

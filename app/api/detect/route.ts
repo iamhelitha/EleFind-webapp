@@ -10,7 +10,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/auth";
+import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 import { runDetection } from "@/lib/gradio-client";
 import { persistDetectionAsync } from "@/lib/persist-detection";
 import { extractCoordsFromExif } from "@/lib/geo";
@@ -28,8 +28,8 @@ const ACCEPTED_TYPES = new Set([
 
 export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiResponse>> {
   // Require authentication — detection triggers HF Space usage and DB writes
-  const session = await auth();
-  if (!session?.user) {
+  const user = await getServerAuthUserFromRequest(req);
+  if (!user) {
     return NextResponse.json(
       { success: false, error: "Sign in to use detection." },
       { status: 401 }
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<DetectionApiR
   }
 
   // Rate limit: 10 detections per minute per user
-  const userId = session.user.id ?? getClientIp(req);
+  const userId = user.id ?? getClientIp(req);
   if (!rateLimit(`detect:${userId}`, 10, 60_000)) {
     return NextResponse.json(
       { success: false, error: "Too many requests. Please wait a moment before detecting again." },
