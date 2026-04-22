@@ -10,8 +10,9 @@ import type { MapDetection, CrossingZone } from "@/types";
  */
 
 export default async function MapPage() {
-  let detections: MapDetection[] = MOCK_DETECTIONS;
-  let crossings: CrossingZone[] = MOCK_CROSSINGS;
+  const isProd = process.env.NODE_ENV === "production";
+  let detections: MapDetection[] = isProd ? [] : MOCK_DETECTIONS;
+  let crossings: CrossingZone[] = isProd ? [] : MOCK_CROSSINGS;
 
   // Default: fetch only the last year of data
   const now = new Date();
@@ -19,11 +20,14 @@ export default async function MapPage() {
   oneYearAgo.setFullYear(now.getFullYear() - 1);
   const dateFrom = oneYearAgo.toISOString();
 
+  const serverBaseUrl =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000");
+
   try {
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
     const [detectRes, crossRes] = await Promise.all([
-      fetch(`${appUrl}/api/detections?dateFrom=${dateFrom}`, { cache: "no-store" }),
-      fetch(`${appUrl}/api/crossings`, { cache: "no-store" }),
+      fetch(`${serverBaseUrl}/api/detections?dateFrom=${dateFrom}`, { cache: "no-store" }),
+      fetch(`${serverBaseUrl}/api/crossings`, { cache: "no-store" }),
     ]);
     if (detectRes.ok) {
       detections = await detectRes.json();
@@ -31,8 +35,10 @@ export default async function MapPage() {
     if (crossRes.ok) {
       crossings = await crossRes.json();
     }
-  } catch {
-    // Fall back to mock data silently
+  } catch (error) {
+    if (!isProd) {
+      console.error("[map/page] Failed to load map data; using mock fallback.", error);
+    }
   }
 
   return (

@@ -22,7 +22,15 @@
 import { Client } from "@gradio/client";
 import type { DetectionParams, DetectionResult } from "@/types";
 
-const HF_SPACE = process.env.HF_SPACE_NAME ?? "iamhelitha/EleFind";
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+  return value;
+}
+
+const HF_SPACE = getRequiredEnv("HF_SPACE_NAME");
 
 /** How long to wait after a cold-start failure before retrying (ms). */
 const COLD_START_WAIT_MS = 8_000;

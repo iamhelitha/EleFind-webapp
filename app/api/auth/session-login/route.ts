@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getFirebaseAdminAuth } from "@/lib/firebase-admin";
 import { APP_SESSION_COOKIE } from "@/lib/server-auth";
 import { syncFirebaseUserToDb } from "@/lib/auth-user-sync";
+import { createAppSessionToken } from "@/lib/auth-session";
+import { verifyFirebaseIdToken } from "@/lib/firebase-id-token";
 
 interface SessionLoginBody {
   idToken?: unknown;
@@ -31,7 +32,6 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const firebaseAdminAuth = getFirebaseAdminAuth();
     const body = (await request.json()) as SessionLoginBody;
     if (typeof body.idToken !== "string" || body.idToken.length < 20) {
       return NextResponse.json(
@@ -40,18 +40,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const decoded = await firebaseAdminAuth.verifyIdToken(body.idToken, true);
+    const decoded = await verifyFirebaseIdToken(body.idToken);
 
-    if (!decoded.email) {
-      return NextResponse.json(
-        { success: false, error: "Authenticated user is missing an email." },
-        { status: 400 }
-      );
-    }
-
-    const authTime = typeof decoded.auth_time === "number" ? decoded.auth_time : 0;
     const nowSeconds = Math.floor(Date.now() / 1000);
-    if (nowSeconds - authTime > 5 * 60) {
+    if (nowSeconds - decoded.authTime > 5 * 60) {
       return NextResponse.json(
         { success: false, error: "Recent sign-in required." },
         { status: 401 }
@@ -65,8 +57,8 @@ export async function POST(request: NextRequest) {
       syncedUser = await syncFirebaseUserToDb({
         firebaseUid: decoded.uid,
         email: decoded.email,
-        name: typeof decoded.name === "string" ? decoded.name : null,
-        emailVerified: Boolean(decoded.email_verified),
+        name: decoded.name,
+        emailVerified: decoded.emailVerified,
         provider,
       });
     } catch (error) {
@@ -83,8 +75,13 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
-    const sessionCookie = await firebaseAdminAuth.createSessionCookie(body.idToken, {
-      expiresIn: SESSION_MAX_AGE_MS,
+    const sessionCookie = await createAppSessionToken({
+      userId: syncedUser.id,
+      firebaseUid: decoded.uid,
+      email: decoded.email,
+      name: decoded.name,
+      role: syncedUser.role,
+      provider,
     });
 
     const response = NextResponse.json({

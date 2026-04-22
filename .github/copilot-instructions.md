@@ -8,7 +8,7 @@ EleFind is an AI-powered elephant detection and mapping web app (BSc dissertatio
 Browser → Next.js (App Router) → @gradio/client → HF Spaces Gradio app (YOLOv11+SAHI) → [future: PostgreSQL+PostGIS]
 ```
 
-**Do NOT suggest adding FastAPI/Flask middleware.** `@gradio/client` calls the live HF Space (`iamhelitha/EleFind`) directly from server-side API routes — this is intentional.
+**Do NOT suggest adding FastAPI/Flask middleware.** `@gradio/client` calls the live HF Space (`iamhelitha/EleFind-gradio-ui`) directly from server-side API routes — this is intentional.
 
 ## Tech Stack
 

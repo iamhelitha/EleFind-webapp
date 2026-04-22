@@ -20,7 +20,7 @@ const COLD_START_WAIT_MS = 8_000;
  * Automatically retries once after a short delay to handle cold-start wakeup
  * on the free tier (Spaces sleep after ~15 min of inactivity).
  *
- * @param spaceId  HF Space identifier, e.g. "iamhelitha/EleFind"
+ * @param spaceId  HF Space identifier, e.g. "iamhelitha/EleFind-gradio-ui"
  * @param params   Detection parameters including the image File/Blob
  */
 export async function runDetectionFromBrowser(

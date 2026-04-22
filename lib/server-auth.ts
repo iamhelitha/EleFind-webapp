@@ -1,9 +1,9 @@
 import { cookies } from "next/headers";
-import { getFirebaseAdminAuth } from "@/lib/firebase-admin";
 import pool from "@/lib/db";
 import { syncFirebaseUserToDb } from "@/lib/auth-user-sync";
+import { getAppSessionCookieName, verifyAppSessionToken } from "@/lib/auth-session";
 
-export const APP_SESSION_COOKIE = "elefind_session";
+export const APP_SESSION_COOKIE = getAppSessionCookieName();
 
 export interface AppAuthUser {
   id: string;
@@ -32,18 +32,14 @@ async function getServerAuthUserFromSessionCookie(
   }
 
   try {
-    const firebaseAdminAuth = getFirebaseAdminAuth();
-    const decoded = await firebaseAdminAuth.verifySessionCookie(sessionCookie, true);
-    if (!decoded.email) {
-      return null;
-    }
+    const decoded = await verifyAppSessionToken(sessionCookie);
 
     const lookupByUid = await pool.query(
       `SELECT id, email, name, role, firebase_uid
        FROM users
        WHERE firebase_uid = $1
        LIMIT 1`,
-      [decoded.uid]
+      [decoded.firebaseUid]
     );
 
     const row = (lookupByUid.rows[0] as {
@@ -65,11 +61,11 @@ async function getServerAuthUserFromSessionCookie(
     }
 
     const synced = await syncFirebaseUserToDb({
-      firebaseUid: decoded.uid,
+      firebaseUid: decoded.firebaseUid,
       email: decoded.email,
-      name: typeof decoded.name === "string" ? decoded.name : null,
-      emailVerified: Boolean(decoded.email_verified),
-      provider: decoded.firebase?.sign_in_provider ?? "firebase",
+      name: decoded.name,
+      emailVerified: true,
+      provider: decoded.provider,
     });
 
     return {
@@ -77,7 +73,7 @@ async function getServerAuthUserFromSessionCookie(
       email: synced.email,
       name: synced.name,
       role: synced.role,
-      firebaseUid: decoded.uid,
+      firebaseUid: decoded.firebaseUid,
     };
   } catch {
     return null;

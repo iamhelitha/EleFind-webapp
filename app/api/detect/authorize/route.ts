@@ -10,7 +10,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerAuthUserFromRequest } from "@/lib/server-auth";
 import { rateLimit, getClientIp } from "@/lib/rate-limit";
 
-const HF_SPACE = process.env.HF_SPACE_NAME ?? "iamhelitha/EleFind";
+function getRequiredEnv(name: string): string {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is not configured.`);
+  }
+  return value;
+}
+
+const HF_SPACE = getRequiredEnv("HF_SPACE_NAME");
 
 export async function GET(req: NextRequest) {
   const user = await getServerAuthUserFromRequest(req);
