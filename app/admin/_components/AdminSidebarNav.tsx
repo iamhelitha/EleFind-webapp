@@ -6,7 +6,6 @@ import {
   LayoutDashboard,
   ScanSearch,
   MapPinned,
-  Users,
   ArrowLeft,
 } from "lucide-react";
 
@@ -15,14 +14,12 @@ interface NavItem {
   label: string;
   icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
-  disabled?: boolean;
 }
 
 const ADMIN_NAV: NavItem[] = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/detections", label: "Detections", icon: ScanSearch },
   { href: "/admin/crossings", label: "Crossing Zones", icon: MapPinned },
-  { href: "/admin/users", label: "Officers", icon: Users, disabled: true },
 ];
 
 export default function AdminSidebarNav() {
@@ -31,22 +28,8 @@ export default function AdminSidebarNav() {
   return (
     <nav className="flex flex-col h-full">
       <ul className="flex-1 p-2 space-y-0.5">
-        {ADMIN_NAV.map(({ href, label, icon: Icon, disabled, exact }) => {
+        {ADMIN_NAV.map(({ href, label, icon: Icon, exact }) => {
           const isActive = exact ? pathname === href : pathname.startsWith(href);
-
-          if (disabled) {
-            return (
-              <li key={href}>
-                <div className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm text-green-700 cursor-not-allowed select-none">
-                  <Icon className="h-4 w-4 shrink-0" />
-                  <span>{label}</span>
-                  <span className="ml-auto text-[10px] bg-green-800 text-green-400 rounded px-1.5 py-0.5 font-medium">
-                    Soon
-                  </span>
-                </div>
-              </li>
-            );
-          }
 
           return (
             <li key={href}>
