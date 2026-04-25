@@ -103,10 +103,10 @@ export default function SignupPage() {
   }
 
   useEffect(() => {
-    let auth: Auth | undefined;
     setGoogleLoading(true);
+    const auth = getFirebaseAuth();
 
-    getRedirectResult(getFirebaseAuth())
+    getRedirectResult(auth)
       .then(async (credential) => {
         if (!credential) return;
         const idToken = await credential.user.getIdToken(true);
@@ -114,7 +114,8 @@ export default function SignupPage() {
         window.location.href = "/map";
       })
       .catch(async (err) => {
-        if (auth) await signOut(auth).catch(() => undefined);
+        console.error("[signup] Google redirect error:", err);
+        await signOut(auth).catch(() => undefined);
         setError(getFirebaseAuthErrorMessage(err, "Google sign-up failed. Please try again."));
       })
       .finally(() => {

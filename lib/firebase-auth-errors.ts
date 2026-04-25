@@ -23,11 +23,16 @@ const MESSAGE_BY_CODE: Record<string, string> = {
 export function getFirebaseAuthErrorMessage(error: unknown, fallback: string): string {
   if (error && typeof error === "object") {
     const maybeError = error as FirebaseErrorShape;
-    if (maybeError.code && MESSAGE_BY_CODE[maybeError.code]) {
-      return MESSAGE_BY_CODE[maybeError.code];
-    }
-    // Surface the actual message for non-Firebase errors (e.g. server errors from session-login)
-    if (!maybeError.code && typeof maybeError.message === "string" && maybeError.message) {
+    if (maybeError.code) {
+      if (MESSAGE_BY_CODE[maybeError.code]) {
+        return MESSAGE_BY_CODE[maybeError.code];
+      }
+      // Unknown Firebase code — surface the raw message so we can diagnose it
+      if (typeof maybeError.message === "string" && maybeError.message) {
+        return maybeError.message;
+      }
+    } else if (typeof maybeError.message === "string" && maybeError.message) {
+      // Non-Firebase error (e.g. server errors from session-login)
       return maybeError.message;
     }
   }
