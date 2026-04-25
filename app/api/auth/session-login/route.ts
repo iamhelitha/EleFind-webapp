@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { APP_SESSION_COOKIE } from "@/lib/server-auth";
 import { syncFirebaseUserToDb } from "@/lib/auth-user-sync";
-import { createAppSessionToken } from "@/lib/auth-session";
+import { createSession, SESSION_MAX_AGE_SECONDS } from "@/lib/db-sessions";
 import { verifyFirebaseIdToken } from "@/lib/firebase-id-token";
 
 interface SessionLoginBody {
@@ -9,16 +9,11 @@ interface SessionLoginBody {
   provider?: unknown;
 }
 
-const SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 5;
-
 function validateRequestOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
-  if (!origin) {
-    return true;
-  }
+  if (!origin) return true;
 
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-
   try {
     return new URL(origin).origin === new URL(appUrl).origin;
   } catch {
@@ -28,7 +23,10 @@ function validateRequestOrigin(request: NextRequest): boolean {
 
 export async function POST(request: NextRequest) {
   if (!validateRequestOrigin(request)) {
-    return NextResponse.json({ success: false, error: "Invalid request origin." }, { status: 403 });
+    return NextResponse.json(
+      { success: false, error: "Invalid request origin." },
+      { status: 403 }
+    );
   }
 
   try {
@@ -41,7 +39,6 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = await verifyFirebaseIdToken(body.idToken);
-
     const provider = typeof body.provider === "string" ? body.provider : "password";
 
     let syncedUser;
@@ -58,8 +55,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            error:
-              "This email is already linked to another account. Please contact support.",
+            error: "This email is already linked to another account. Please contact support.",
           },
           { status: 409 }
         );
@@ -67,13 +63,12 @@ export async function POST(request: NextRequest) {
       throw error;
     }
 
-    const sessionCookie = await createAppSessionToken({
+    const token = await createSession({
       userId: syncedUser.id,
       firebaseUid: decoded.uid,
       email: decoded.email,
       name: decoded.name,
       role: syncedUser.role,
-      provider,
     });
 
     const response = NextResponse.json({
@@ -87,12 +82,12 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    response.cookies.set(APP_SESSION_COOKIE, sessionCookie, {
+    response.cookies.set(APP_SESSION_COOKIE, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: Math.floor(SESSION_MAX_AGE_MS / 1000),
+      maxAge: SESSION_MAX_AGE_SECONDS,
     });
 
     return response;

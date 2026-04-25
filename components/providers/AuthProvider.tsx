@@ -78,6 +78,7 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
       credentials: "include",
     });
     setUser(null);
+    window.location.href = "/login";
   }, []);
 
   useEffect(() => {

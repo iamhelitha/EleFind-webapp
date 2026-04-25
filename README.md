@@ -7,6 +7,11 @@ A web application for locating elephants. Built with Next.js, Supabase, Firebase
 - Node.js 18+
 - npm
 
+##
+login credintials
+- admin@admin.com
+- findelephants
+
 ## Setup
 
 1. **Install dependencies**

@@ -1,9 +1,7 @@
 import { cookies } from "next/headers";
-import pool from "@/lib/db";
-import { syncFirebaseUserToDb } from "@/lib/auth-user-sync";
-import { getAppSessionCookieName, verifyAppSessionToken } from "@/lib/auth-session";
+import { getSession } from "./db-sessions";
 
-export const APP_SESSION_COOKIE = getAppSessionCookieName();
+export const APP_SESSION_COOKIE = "elefind_session";
 
 export interface AppAuthUser {
   id: string;
@@ -15,67 +13,41 @@ export interface AppAuthUser {
 
 export async function getServerAuthUser(): Promise<AppAuthUser | null> {
   const cookieStore = await cookies();
-  return getServerAuthUserFromSessionCookie(cookieStore.get(APP_SESSION_COOKIE)?.value ?? null);
+  const token = cookieStore.get(APP_SESSION_COOKIE)?.value ?? null;
+  return resolveSession(token);
 }
 
 export async function getServerAuthUserFromRequest(request: Request): Promise<AppAuthUser | null> {
-  return getServerAuthUserFromSessionCookie(
-    "cookies" in request ? (request as { cookies: { get: (name: string) => { value: string } | undefined } }).cookies.get(APP_SESSION_COOKIE)?.value ?? null : null
-  );
+  const cookieHeader = request.headers.get("cookie") ?? "";
+  const token = parseCookieHeader(cookieHeader, APP_SESSION_COOKIE);
+  return resolveSession(token);
 }
 
-async function getServerAuthUserFromSessionCookie(
-  sessionCookie: string | null
-): Promise<AppAuthUser | null> {
-  if (!sessionCookie) {
-    return null;
-  }
-
+async function resolveSession(token: string | null): Promise<AppAuthUser | null> {
+  if (!token) return null;
   try {
-    const decoded = await verifyAppSessionToken(sessionCookie);
-
-    const lookupByUid = await pool.query(
-      `SELECT id, email, name, role, firebase_uid
-       FROM users
-       WHERE firebase_uid = $1
-       LIMIT 1`,
-      [decoded.firebaseUid]
-    );
-
-    const row = (lookupByUid.rows[0] as {
-      id: string;
-      email: string;
-      name: string | null;
-      role: string;
-      firebase_uid: string | null;
-    } | undefined) ?? null;
-
-    if (row?.firebase_uid) {
-      return {
-        id: row.id,
-        email: row.email,
-        name: row.name,
-        role: row.role,
-        firebaseUid: row.firebase_uid,
-      };
-    }
-
-    const synced = await syncFirebaseUserToDb({
-      firebaseUid: decoded.firebaseUid,
-      email: decoded.email,
-      name: decoded.name,
-      emailVerified: true,
-      provider: decoded.provider,
-    });
-
+    const session = await getSession(token);
+    if (!session) return null;
     return {
-      id: synced.id,
-      email: synced.email,
-      name: synced.name,
-      role: synced.role,
-      firebaseUid: decoded.firebaseUid,
+      id: session.user_id,
+      email: session.email,
+      name: session.name,
+      role: session.role,
+      firebaseUid: session.firebase_uid,
     };
   } catch {
     return null;
   }
+}
+
+function parseCookieHeader(header: string, name: string): string | null {
+  for (const part of header.split(";")) {
+    const trimmed = part.trim();
+    const eqIdx = trimmed.indexOf("=");
+    if (eqIdx === -1) continue;
+    if (trimmed.slice(0, eqIdx).trim() === name) {
+      return decodeURIComponent(trimmed.slice(eqIdx + 1).trim());
+    }
+  }
+  return null;
 }
