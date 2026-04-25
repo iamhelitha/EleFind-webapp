@@ -95,6 +95,13 @@ export function AppAuthProvider({ children }: { children: ReactNode }) {
             return;
           }
 
+          // Prefer the existing server session; only create a new one if none exists.
+          const existingSession = await fetchSession();
+          if (existingSession) {
+            setUser(existingSession);
+            return;
+          }
+
           await exchangeIdTokenForSession();
           const serverUser = await fetchSession();
           setUser(serverUser);

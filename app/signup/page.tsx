@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   createUserWithEmailAndPassword,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   type Auth,
   updateProfile,
@@ -101,23 +102,35 @@ export default function SignupPage() {
     }
   }
 
-  async function handleGoogleSignUp() {
-    setGoogleLoading(true);
-    setError(null);
+  useEffect(() => {
     let auth: Auth | undefined;
+    setGoogleLoading(true);
+
+    getRedirectResult(getFirebaseAuth())
+      .then(async (credential) => {
+        if (!credential) return;
+        const idToken = await credential.user.getIdToken(true);
+        await exchangeFirebaseSession(idToken, "google");
+        window.location.href = "/map";
+      })
+      .catch(async (err) => {
+        if (auth) await signOut(auth).catch(() => undefined);
+        setError(getFirebaseAuthErrorMessage(err, "Google sign-up failed. Please try again."));
+      })
+      .finally(() => {
+        setGoogleLoading(false);
+      });
+  }, []);
+
+  async function handleGoogleSignUp() {
+    setError(null);
+    setGoogleLoading(true);
 
     try {
-      auth = getFirebaseAuth();
-      const credential = await signInWithPopup(auth, getFirebaseGoogleProvider());
-      const idToken = await credential.user.getIdToken(true);
-      await exchangeFirebaseSession(idToken, "google");
-      window.location.href = "/map";
+      const auth = getFirebaseAuth();
+      await signInWithRedirect(auth, getFirebaseGoogleProvider());
     } catch (err) {
-      if (auth) {
-        await signOut(auth).catch(() => undefined);
-      }
       setError(getFirebaseAuthErrorMessage(err, "Google sign-up failed. Please try again."));
-    } finally {
       setGoogleLoading(false);
     }
   }
@@ -143,7 +156,7 @@ export default function SignupPage() {
             {googleLoading ? (
               <>
                 <Spinner size="sm" />
-                Redirecting...
+                Please wait...
               </>
             ) : (
               <>

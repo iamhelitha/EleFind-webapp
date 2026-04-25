@@ -42,14 +42,6 @@ export async function POST(request: NextRequest) {
 
     const decoded = await verifyFirebaseIdToken(body.idToken);
 
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    if (nowSeconds - decoded.authTime > 5 * 60) {
-      return NextResponse.json(
-        { success: false, error: "Recent sign-in required." },
-        { status: 401 }
-      );
-    }
-
     const provider = typeof body.provider === "string" ? body.provider : "password";
 
     let syncedUser;
