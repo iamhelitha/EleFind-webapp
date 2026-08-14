@@ -26,20 +26,20 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
   if (!user) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-        <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl text-center">
+        <div className="w-full max-w-sm rounded-2xl bg-sand p-6 shadow-xl text-center">
           <p className="text-sm text-muted mb-4">
             You must be logged in to add zones.
           </p>
           <div className="flex gap-3 justify-center">
             <a
               href="/login"
-              className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+              className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600 transition-colors"
             >
               Sign in
             </a>
             <button
               onClick={onClose}
-              className="rounded-lg border border-card-border px-4 py-2 text-sm text-muted hover:border-green-300 transition-colors"
+              className="rounded-lg border border-divider px-4 py-2 text-sm text-muted hover:border-sage-300 transition-colors"
             >
               Cancel
             </button>
@@ -125,14 +125,14 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+      <div className="w-full max-w-md rounded-2xl bg-sand p-6 shadow-xl">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="font-heading text-lg font-bold text-green-900">
+          <h2 className="font-heading text-lg font-bold text-ink">
             Add Crossing Zone
           </h2>
           <button
             onClick={onClose}
-            className="text-muted hover:text-green-900 transition-colors"
+            className="text-muted hover:text-ink transition-colors"
             aria-label="Close"
           >
             ✕
@@ -141,40 +141,40 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-green-900 mb-1">
-              Name <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-ink mb-1">
+              Name <span className="text-clay-text">*</span>
             </label>
             <input
               type="text"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full rounded-lg border border-card-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-divider px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
               placeholder="e.g. Minneriya Corridor"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-green-900 mb-1">
+            <label className="block text-sm font-medium text-ink mb-1">
               Description
             </label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-card-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+              className="w-full rounded-lg border border-divider px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent resize-none"
               placeholder="Optional description"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-green-900 mb-1">
-              Risk Level <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-ink mb-1">
+              Risk Level <span className="text-clay-text">*</span>
             </label>
             <select
               value={riskLevel}
               onChange={(e) => setRiskLevel(e.target.value)}
-              className="w-full rounded-lg border border-card-border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full rounded-lg border border-divider px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-accent"
             >
               {RISK_LEVELS.map((level) => (
                 <option key={level} value={level}>
@@ -186,19 +186,19 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
 
           {/* Polygon — pre-drawn or manual */}
           {drawnPointCount !== null ? (
-            <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+            <div className="rounded-lg bg-sand border border-green-200 px-4 py-3 text-sm text-ink">
               ✓ Zone drawn: <strong>{drawnPointCount} points</strong>
             </div>
           ) : (
             <div>
-              <label className="block text-sm font-medium text-green-900 mb-1">
-                Coordinates <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-ink mb-1">
+                Coordinates <span className="text-clay-text">*</span>
               </label>
               <textarea
                 value={coordinates}
                 onChange={(e) => setCoordinates(e.target.value)}
                 rows={5}
-                className="w-full rounded-lg border border-card-border px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                className="w-full rounded-lg border border-divider px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-accent resize-none"
                 placeholder={
                   "Enter one lat,lng pair per line. Minimum 3 points.\nExample:\n7.8731, 80.7718\n7.9731, 80.8718\n7.8731, 80.8718"
                 }
@@ -210,7 +210,7 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
           )}
 
           {error && (
-            <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+            <p className="rounded-lg bg-clay-surface px-3 py-2 text-sm text-clay-text">
               {error}
             </p>
           )}
@@ -219,14 +219,14 @@ export default function AddZoneModal({ polygon, onSuccess, onClose }: AddZoneMod
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 rounded-lg border border-card-border px-4 py-2 text-sm font-medium text-muted hover:border-green-300 transition-colors"
+              className="flex-1 rounded-lg border border-divider px-4 py-2 text-sm font-medium text-muted hover:border-sage-300 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600 disabled:opacity-60 transition-colors"
             >
               {loading ? (
                 <>

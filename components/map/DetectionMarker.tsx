@@ -79,16 +79,16 @@ export default function DetectionMarker({ detection }: DetectionMarkerProps) {
     >
       <Popup>
         <div className="min-w-[180px] text-sm space-y-1">
-          <p className="font-bold text-green-900">
+          <p className="font-bold text-night-text">
             {detection.elephantCount} elephant{detection.elephantCount !== 1 ? "s" : ""}
           </p>
-          <p className="text-muted">
+          <p className="text-[rgba(240,233,217,0.55)]">
             Confidence: <strong>{(detection.confidence * 100).toFixed(1)}%</strong>
           </p>
-          <p className="text-muted">
+          <p className="text-[rgba(240,233,217,0.55)]">
             {formatLatLng(detection.latitude, detection.longitude)}
           </p>
-          <p className="text-muted text-xs">
+          <p className="text-[rgba(240,233,217,0.55)] text-xs">
             {new Date(detection.detectedAt).toLocaleDateString()} &middot; {detection.imageName}
           </p>
           <div className="pt-1">

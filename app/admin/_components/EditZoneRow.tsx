@@ -16,16 +16,16 @@ const RISK_LEVELS = ["low", "medium", "high", "critical"] as const;
 
 const CREDIBILITY = (count: number) => {
   if (count === 0) return { label: "Unverified", cls: "text-gray-400" };
-  if (count <= 2) return { label: "Low confidence", cls: "text-amber-500" };
-  if (count <= 9) return { label: "Confirmed", cls: "text-green-600" };
-  return { label: "High confidence", cls: "text-green-800 font-semibold" };
+  if (count <= 2) return { label: "Low confidence", cls: "text-accent-500" };
+  if (count <= 9) return { label: "Confirmed", cls: "text-sage-700" };
+  return { label: "High confidence", cls: "text-ink font-semibold" };
 };
 
 const RISK_BADGE: Record<string, string> = {
-  low: "bg-green-100 text-green-800",
-  medium: "bg-amber-100 text-amber-800",
+  low: "bg-sand-surface text-ink",
+  medium: "bg-accent-100 text-accent-800",
   high: "bg-orange-100 text-orange-800",
-  critical: "bg-red-100 text-red-800",
+  critical: "bg-clay-surface text-clay-deep",
 };
 
 export default function EditZoneRow({ zone }: { zone: Zone }) {
@@ -65,7 +65,7 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
 
   if (editing) {
     return (
-      <tr className="bg-green-50/60">
+      <tr className="bg-sand/60">
         <td className="px-3 py-2.5" colSpan={5}>
           <div className="flex flex-wrap gap-2.5 items-end">
             <div className="flex-1 min-w-[140px]">
@@ -73,7 +73,7 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
               <input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="w-full rounded-lg border border-divider px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-accent focus:outline-none"
               />
             </div>
             <div className="flex-1 min-w-[140px]">
@@ -81,7 +81,7 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none"
+                className="w-full rounded-lg border border-divider px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-accent focus:outline-none"
               />
             </div>
             <div>
@@ -89,7 +89,7 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
               <select
                 value={riskLevel}
                 onChange={(e) => setRiskLevel(e.target.value)}
-                className="rounded-lg border border-card-border px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-green-500 focus:outline-none bg-white"
+                className="rounded-lg border border-divider px-2.5 py-1.5 text-xs focus:ring-2 focus:ring-accent focus:outline-none bg-sand"
               >
                 {RISK_LEVELS.map((r) => (
                   <option key={r} value={r}>
@@ -102,13 +102,13 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
               <button
                 onClick={handleSave}
                 disabled={loading}
-                className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-green-700 text-white hover:bg-green-800 disabled:opacity-50 transition-colors"
+                className="rounded-lg px-3 py-1.5 text-xs font-semibold bg-accent text-white hover:bg-accent-600 disabled:opacity-50 transition-colors"
               >
                 {loading ? "Saving…" : "Save"}
               </button>
               <button
                 onClick={() => setEditing(false)}
-                className="rounded-lg px-3 py-1.5 text-xs border border-card-border text-muted hover:border-green-300 transition-colors"
+                className="rounded-lg px-3 py-1.5 text-xs border border-divider text-muted hover:border-sage-300 transition-colors"
               >
                 Cancel
               </button>
@@ -120,12 +120,12 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
   }
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors">
-      <td className="px-3 py-2.5 font-medium text-green-900">{zone.name}</td>
+    <tr className="hover:bg-neutral-100 transition-colors">
+      <td className="px-3 py-2.5 font-medium text-ink">{zone.name}</td>
       <td className="px-3 py-2.5">
         <span
           className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-bold uppercase ${
-            RISK_BADGE[zone.risk_level] ?? "bg-gray-100 text-gray-600"
+            RISK_BADGE[zone.risk_level] ?? "bg-neutral-200 text-neutral-700"
           }`}
         >
           {zone.risk_level}
@@ -142,14 +142,14 @@ export default function EditZoneRow({ zone }: { zone: Zone }) {
         <div className="flex gap-1.5">
           <button
             onClick={() => setEditing(true)}
-            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-green-700 hover:bg-green-50 border border-green-200 transition-colors"
+            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-accent-700 hover:bg-sand border border-green-200 transition-colors"
           >
             Edit
           </button>
           <button
             onClick={handleDelete}
             disabled={loading}
-            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-red-600 hover:bg-red-50 border border-red-200 disabled:opacity-50 transition-colors"
+            className="rounded-lg px-2.5 py-1 text-[11px] font-medium text-clay-text hover:bg-clay-surface border border-clay-border disabled:opacity-50 transition-colors"
           >
             {loading ? "…" : "Delete"}
           </button>

@@ -15,9 +15,9 @@ export default function ConfidenceSlider({
 }: ConfidenceSliderProps) {
   return (
     <div className="px-1">
-      <label className="flex items-center justify-between text-xs font-medium text-muted mb-1.5">
+      <label className="flex items-center justify-between text-xs font-medium text-[rgba(240,233,217,0.55)] mb-1.5">
         <span>Min. Confidence</span>
-        <span className="tabular-nums font-semibold text-green-900">
+        <span className="tabular-nums font-semibold text-night-text">
           {(value * 100).toFixed(0)}%
         </span>
       </label>
@@ -28,7 +28,7 @@ export default function ConfidenceSlider({
         step={0.05}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        className="w-full accent-green-700"
+        className="w-full accent-[var(--accent)]"
       />
     </div>
   );

@@ -29,7 +29,7 @@ export default function MapControls({
       {/* Toggle button */}
       <button
         onClick={onToggleCollapse}
-        className="mb-2 flex items-center gap-1.5 rounded-lg bg-card-bg px-3 py-2 text-sm font-medium text-green-900 shadow-md hover:bg-green-100 transition-colors border border-card-border"
+        className="mb-2 flex items-center gap-1.5 rounded-lg bg-[rgba(25,29,22,0.92)] backdrop-blur-md px-3 py-2 text-sm font-medium text-night-text shadow-md hover:bg-[rgba(25,29,22,0.92)] backdrop-blur-md transition-colors border border-[rgba(240,233,217,0.14)]"
       >
         <SlidersHorizontal className="h-4 w-4" />
         {collapsed ? "Filters" : "Hide"}
@@ -37,8 +37,8 @@ export default function MapControls({
 
       {/* Controls panel */}
       {!collapsed && (
-        <div className="w-64 rounded-xl bg-card-bg border border-card-border shadow-lg p-4 space-y-4 animate-fade-in">
-          <h3 className="font-heading text-sm font-bold text-green-900">
+        <div className="w-64 rounded-xl bg-[rgba(25,29,22,0.92)] backdrop-blur-md border border-[rgba(240,233,217,0.14)] shadow-lg p-4 space-y-4 animate-fade-in">
+          <h3 className="font-heading text-sm font-bold text-night-text">
             Map Layers
           </h3>
 
@@ -46,7 +46,7 @@ export default function MapControls({
           <label className="flex items-center gap-2 cursor-pointer">
             <button
               onClick={() => update({ showDetections: !filters.showDetections })}
-              className="text-green-700"
+              className="text-accent-400"
             >
               {filters.showDetections ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 opacity-40" />}
             </button>
@@ -56,7 +56,7 @@ export default function MapControls({
           <label className="flex items-center gap-2 cursor-pointer">
             <button
               onClick={() => update({ showCrossingZones: !filters.showCrossingZones })}
-              className="text-amber-500"
+              className="text-accent-500"
             >
               {filters.showCrossingZones ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4 opacity-40" />}
             </button>
@@ -65,7 +65,7 @@ export default function MapControls({
 
           {/* Confidence filter */}
           <div>
-            <label className="text-xs font-medium text-muted block mb-1">
+            <label className="text-xs font-medium text-[rgba(240,233,217,0.55)] block mb-1">
               Min. Confidence: {(filters.minConfidence * 100).toFixed(0)}%
             </label>
             <input
@@ -73,20 +73,20 @@ export default function MapControls({
               min={0} max={1} step={0.05}
               value={filters.minConfidence}
               onChange={(e) => update({ minConfidence: parseFloat(e.target.value) })}
-              className="w-full accent-green-700"
+              className="w-full accent-[var(--accent)]"
             />
           </div>
 
           {/* Legend */}
-          <div className="border-t border-card-border pt-3">
-            <h4 className="text-xs font-medium text-muted mb-2">Legend</h4>
+          <div className="border-t border-[rgba(240,233,217,0.14)] pt-3">
+            <h4 className="text-xs font-medium text-[rgba(240,233,217,0.55)] mb-2">Legend</h4>
             <div className="space-y-1">
               {[
                 { label: "High confidence (≥80%)", color: "#52b788" },
                 { label: "Medium (60–80%)", color: "#f4a261" },
                 { label: "Low (<60%)", color: "#e76f51" },
               ].map(({ label, color }) => (
-                <div key={label} className="flex items-center gap-2 text-xs text-muted">
+                <div key={label} className="flex items-center gap-2 text-xs text-[rgba(240,233,217,0.55)]">
                   <span className="h-3 w-3 rounded-full" style={{ background: color }} />
                   {label}
                 </div>
@@ -99,7 +99,7 @@ export default function MapControls({
                 { label: "High risk", color: "#e76f51" },
                 { label: "Critical", color: "#9b2226" },
               ].map(({ label, color }) => (
-                <div key={label} className="flex items-center gap-2 text-xs text-muted">
+                <div key={label} className="flex items-center gap-2 text-xs text-[rgba(240,233,217,0.55)]">
                   <span
                     className="h-3 w-5 rounded-sm"
                     style={{ background: color, opacity: 0.4 }}

@@ -59,8 +59,8 @@ export default function UserLocationMarker({
       <Marker position={[latitude, longitude]} icon={userIcon}>
         <Popup>
           <div className="text-sm">
-            <p className="font-bold text-green-900">Your Location</p>
-            <p className="text-muted text-xs mt-0.5">
+            <p className="font-bold text-night-text">Your Location</p>
+            <p className="text-[rgba(240,233,217,0.55)] text-xs mt-0.5">
               {formatLatLng(latitude, longitude)}
             </p>
           </div>

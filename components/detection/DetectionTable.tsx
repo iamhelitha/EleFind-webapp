@@ -18,11 +18,11 @@ export default function DetectionTable({ rows }: DetectionTableProps) {
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
         <thead>
-          <tr className="border-b border-card-border bg-green-100/30">
+          <tr className="border-b border-divider bg-sand-surface/30">
             {headers.map((h) => (
               <th
                 key={h}
-                className="whitespace-nowrap px-4 py-2 font-medium text-green-900"
+                className="whitespace-nowrap px-4 py-2 font-medium text-ink"
               >
                 {h}
               </th>
@@ -33,7 +33,7 @@ export default function DetectionTable({ rows }: DetectionTableProps) {
           {rows.map((row, i) => (
             <tr
               key={i}
-              className="border-b border-card-border last:border-0 hover:bg-green-100/10 transition-colors"
+              className="border-b border-divider last:border-0 hover:bg-sand-surface/10 transition-colors"
             >
               {headers.map((h) => {
                 const val = row[h];

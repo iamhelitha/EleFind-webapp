@@ -17,7 +17,7 @@ import Link from "next/link";
 const HeroMap = dynamic(() => import("@/components/map/HeroMap"), {
   ssr: false,
   loading: () => (
-    <div className="absolute inset-0 bg-green-900" />
+    <div className="absolute inset-0 bg-night-panel" />
   ),
 });
 
@@ -57,14 +57,14 @@ export default function HeroMapSection() {
         aria-label="Open interactive map"
       >
         {/* Subtle hover effect */}
-        <div className="h-full w-full transition-colors duration-300 hover:bg-green-900/10" />
+        <div className="h-full w-full transition-colors duration-300 hover:bg-night-panel/10" />
       </Link>
 
       {/* Mobile: small "Explore Map" hint at bottom of hero */}
       <div className="absolute bottom-4 right-4 z-[5] lg:hidden">
         <Link
           href="/map"
-          className="rounded-lg bg-green-700/70 px-3 py-1.5 text-xs font-medium text-green-100 backdrop-blur-sm transition-colors hover:bg-green-700/90"
+          className="rounded-lg bg-accent/70 px-3 py-1.5 text-xs font-medium text-sage-100 backdrop-blur-sm transition-colors hover:bg-accent/90"
         >
           Explore Map →
         </Link>

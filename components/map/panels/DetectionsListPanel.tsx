@@ -27,16 +27,16 @@ export default function DetectionsListPanel({
   return (
     <div className="space-y-1.5">
       <div className="flex items-center gap-1.5 px-1">
-        <MapPin className="h-3.5 w-3.5 text-green-700" />
-        <span className="text-xs font-semibold text-green-900">
+        <MapPin className="h-3.5 w-3.5 text-accent-400" />
+        <span className="text-xs font-semibold text-night-text">
           Detections ({detections.length})
         </span>
       </div>
 
       {sorted.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-card-border p-4 text-center">
-          <p className="text-xs text-muted">No detections recorded yet.</p>
-          <p className="text-[10px] text-muted mt-0.5">
+        <div className="rounded-lg border-2 border-dashed border-[rgba(240,233,217,0.14)] p-4 text-center">
+          <p className="text-xs text-[rgba(240,233,217,0.55)]">No detections recorded yet.</p>
+          <p className="text-[10px] text-[rgba(240,233,217,0.55)] mt-0.5">
             Run detection on a geotagged image to see results here.
           </p>
         </div>
@@ -52,8 +52,8 @@ export default function DetectionsListPanel({
                 className={`
                   flex w-full items-center gap-2.5 rounded-lg border p-2.5 text-left transition-all
                   ${isSelected
-                    ? "border-green-500 bg-green-50/60 ring-1 ring-green-400"
-                    : "border-card-border hover:border-green-300 hover:bg-green-50/40"
+                    ? "border-sage-500 bg-night-land/60 ring-1 ring-green-400"
+                    : "border-[rgba(240,233,217,0.14)] hover:border-sage-300 hover:bg-[rgba(240,233,217,0.10)]/40"
                   }
                 `}
               >
@@ -67,14 +67,14 @@ export default function DetectionsListPanel({
 
                 {/* Details */}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-xs font-medium text-green-900">
+                  <p className="truncate text-xs font-medium text-night-text">
                     {detection.imageName}
                   </p>
-                  <p className="text-[10px] text-muted">
+                  <p className="text-[10px] text-[rgba(240,233,217,0.55)]">
                     {new Date(detection.detectedAt).toLocaleDateString()} ·{" "}
                     {(detection.confidence * 100).toFixed(0)}% conf.
                   </p>
-                  <p className="text-[10px] text-muted/70 tabular-nums">
+                  <p className="text-[10px] text-[rgba(240,233,217,0.55)]/70 tabular-nums">
                     {formatLatLng(detection.latitude, detection.longitude)}
                   </p>
                 </div>
@@ -82,7 +82,7 @@ export default function DetectionsListPanel({
                 {/* Fly-to icon */}
                 <MapPin
                   className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                    isSelected ? "text-green-600" : "text-muted"
+                    isSelected ? "text-sage-300" : "text-[rgba(240,233,217,0.55)]"
                   }`}
                 />
               </button>

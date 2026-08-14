@@ -25,28 +25,28 @@ export default function InfoPanel({
       {/* Toggle button - rendered outside overflow container */}
       <button
         onClick={onToggle}
-        className="absolute -left-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-card-border bg-card-bg shadow-sm hover:bg-green-50 transition-colors"
+        className="absolute -left-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[rgba(240,233,217,0.14)] bg-[rgba(25,29,22,0.92)] backdrop-blur-md shadow-sm hover:bg-[rgba(240,233,217,0.10)] transition-colors"
         aria-label={collapsed ? "Expand info" : "Collapse info"}
       >
         {collapsed ? (
-          <ChevronLeft className="h-3.5 w-3.5 text-green-700" />
+          <ChevronLeft className="h-3.5 w-3.5 text-accent-400" />
         ) : (
-          <ChevronRight className="h-3.5 w-3.5 text-green-700" />
+          <ChevronRight className="h-3.5 w-3.5 text-accent-400" />
         )}
       </button>
 
       {/* Sidebar content */}
       <div
         className={`
-          flex flex-col bg-card-bg border-l border-card-border
+          flex flex-col bg-[rgba(25,29,22,0.92)] backdrop-blur-md border-l border-[rgba(240,233,217,0.14)]
           transition-all duration-300 ease-in-out overflow-hidden
           ${collapsed ? "w-0 min-w-0 border-l-0" : "w-80 min-w-[20rem]"}
         `}
       >
         {!collapsed && (
           <div className="flex flex-col h-full overflow-y-auto animate-fade-in">
-            <div className="px-4 py-3 border-b border-card-border">
-              <h2 className="font-heading text-sm font-bold text-green-900">
+            <div className="px-4 py-3 border-b border-[rgba(240,233,217,0.14)]">
+              <h2 className="font-heading text-sm font-bold text-night-text">
                 {title}
               </h2>
             </div>

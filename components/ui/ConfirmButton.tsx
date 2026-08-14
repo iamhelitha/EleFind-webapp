@@ -71,8 +71,8 @@ export default function ConfirmButton({
       : "px-3 py-1 text-xs";
 
   const styleClass = confirmed
-    ? "bg-green-700 text-white border-green-700"
-    : "bg-transparent text-green-700 border-green-600 hover:bg-green-50";
+    ? "bg-accent text-white border-accent"
+    : "bg-transparent text-accent-700 border-accent hover:bg-sand";
 
   return (
     <button

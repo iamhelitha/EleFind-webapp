@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Syne, DM_Sans } from "next/font/google";
+import { Caprasimo, Figtree } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -7,19 +7,23 @@ import { Toaster } from "react-hot-toast";
 import AuthSessionProvider from "@/components/providers/SessionProvider";
 
 /**
- * Root layout — provides the Syne + DM Sans font variables,
+ * Root layout — provides the Caprasimo + Figtree font variables,
  * navigation bar, footer, and toast notifications to every page.
+ *
+ * Caprasimo carries display headings only (never data — it has no
+ * tabular figures); Figtree carries all interface and body text.
  */
 
-const syne = Syne({
+const caprasimo = Caprasimo({
   subsets: ["latin"],
-  variable: "--font-syne",
+  weight: "400",
+  variable: "--font-caprasimo",
   display: "swap",
 });
 
-const dmSans = DM_Sans({
+const figtree = Figtree({
   subsets: ["latin"],
-  variable: "--font-dm-sans",
+  variable: "--font-figtree",
   display: "swap",
 });
 
@@ -61,16 +65,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${syne.variable} ${dmSans.variable}`}>
+    <html lang="en" className={`${caprasimo.variable} ${figtree.variable}`}>
       <body className="flex min-h-screen flex-col antialiased">
         <Toaster
           position="top-right"
           toastOptions={{
             duration: 4000,
             style: {
-              borderRadius: "12px",
-              background: "#1a3d2b",
-              color: "#d8f3dc",
+              borderRadius: "999px",
+              background: "#191d16",
+              color: "#f0e9d9",
               fontSize: "14px",
             },
           }}

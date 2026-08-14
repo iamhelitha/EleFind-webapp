@@ -19,7 +19,7 @@ const DrawableEleMap = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex h-full items-center justify-center bg-green-100/20">
+      <div className="flex h-full items-center justify-center bg-sand-surface/20">
         <Spinner size="lg" />
       </div>
     ),
@@ -65,7 +65,7 @@ export default function CrossingsPageContent({
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <h1 className="font-heading text-2xl font-bold text-green-900 sm:text-3xl">
+          <h1 className="font-heading text-2xl font-bold text-ink sm:text-3xl">
             Elephant Crossing Zones
           </h1>
           <p className="mt-1 text-sm text-muted">
@@ -78,15 +78,15 @@ export default function CrossingsPageContent({
               onClick={() => setIsDrawingMode((v) => !v)}
               className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${
                 isDrawingMode
-                  ? "bg-amber-500 border-amber-500 text-white"
-                  : "border-green-700 text-green-700 hover:bg-green-50"
+                  ? "bg-accent-400 border-accent-400 text-white"
+                  : "border-accent text-accent-700 hover:bg-sand"
               }`}
             >
               {isDrawingMode ? "Cancel Draw" : "Draw Rectangle"}
             </button>
             <button
               onClick={handleAddZoneClick}
-              className="rounded-lg bg-green-700 px-4 py-2 text-sm font-semibold text-white hover:bg-green-800 transition-colors"
+              className="rounded-lg bg-accent px-4 py-2 text-sm font-semibold text-white hover:bg-accent-600 transition-colors"
             >
               + Add Zone
             </button>
@@ -97,7 +97,7 @@ export default function CrossingsPageContent({
       <div className="grid gap-6 lg:grid-cols-5">
         {/* Map — takes 3/5 */}
         <div className="lg:col-span-3 relative">
-          <div className="h-[500px] lg:h-[600px] rounded-xl overflow-hidden border border-card-border">
+          <div className="h-[500px] lg:h-[600px] rounded-xl overflow-hidden border border-divider">
             <DrawableEleMap
               detections={[]}
               crossingZones={zones}
@@ -108,7 +108,7 @@ export default function CrossingsPageContent({
             />
           </div>
           {isDrawingMode && (
-            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-amber-500 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg pointer-events-none">
+            <div className="absolute top-3 left-1/2 -translate-x-1/2 z-[1000] bg-accent-400 text-white text-xs font-semibold px-4 py-2 rounded-full shadow-lg pointer-events-none">
               Click and drag on the map to draw a rectangle zone.
             </div>
           )}
@@ -116,12 +116,12 @@ export default function CrossingsPageContent({
 
         {/* Zone list — takes 2/5 */}
         <div className="lg:col-span-2 space-y-3">
-          <h2 className="font-heading text-lg font-bold text-green-900">
+          <h2 className="font-heading text-lg font-bold text-ink">
             Zones ({zones.length})
           </h2>
 
           {zones.length === 0 ? (
-            <div className="rounded-xl border-2 border-dashed border-card-border p-8 text-center">
+            <div className="rounded-xl border-2 border-dashed border-divider p-8 text-center">
               <p className="text-sm text-muted">No crossing zones mapped yet.</p>
             </div>
           ) : (
@@ -134,13 +134,13 @@ export default function CrossingsPageContent({
                   <Card
                     className={`p-4 transition-all cursor-pointer ${
                       selected?.id === zone.id
-                        ? "ring-2 ring-green-500"
-                        : "hover:border-green-300"
+                        ? "ring-2 ring-accent"
+                        : "hover:border-sage-300"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-heading font-bold text-green-900">
+                        <p className="font-heading font-bold text-ink">
                           {zone.name}
                         </p>
                         {zone.description && (

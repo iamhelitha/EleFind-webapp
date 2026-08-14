@@ -62,8 +62,8 @@ export default function UserLocationButton({
         transition-colors disabled:opacity-60
         ${
           hasLocation
-            ? "bg-green-100 text-green-900 border border-green-300"
-            : "bg-green-700 text-white hover:bg-green-800"
+            ? "bg-[rgba(25,29,22,0.92)] backdrop-blur-md text-night-text border border-sage-300"
+            : "bg-accent text-white hover:bg-accent-600"
         }
       `}
     >

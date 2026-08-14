@@ -1,37 +1,95 @@
 @import "tailwindcss";
 
 /* ------------------------------------------------------------------ */
-/*  EleFind Design Tokens                                              */
+/*  EleFind Design Tokens — "Organic" system                           */
+/*                                                                     */
+/*  Sand ground for public and analysis surfaces; a deep olive-ink     */
+/*  ground for the map and operations views. One warm terracotta       */
+/*  accent carries action and detection; sage carries confirmation,    */
+/*  safety and terrain. Red-clay is reserved for CRITICAL and errors.  */
 /* ------------------------------------------------------------------ */
 
 :root {
-  /* Primary — deep forest greens */
-  --green-900: #1a3d2b;
-  --green-700: #2d6a4f;
-  --green-500: #40916c;
-  --green-300: #74c69d;
-  --green-100: #d8f3dc;
+  /* Core roles — light ground */
+  --sand: #f5ead8;
+  --sand-surface: #ebddc5;
+  --ink: #201e1d;
+  --divider: rgba(32, 30, 29, 0.16);
 
-  /* Accent — warm amber */
-  --amber-500: #f4a261;
-  --amber-300: #f7c59f;
+  /* Night ground — map + operations */
+  --night: #12150f;
+  --night-panel: #191d16;
+  --night-land: #1e2418;
+  --night-text: #f0e9d9;
 
-  /* Risk palette */
-  --risk-low: #52b788;
-  --risk-medium: #f4a261;
-  --risk-high: #e76f51;
-  --risk-critical: #9b2226;
+  /* Neutral ramp */
+  --neutral-100: #f9f4ed;
+  --neutral-200: #eee7db;
+  --neutral-300: #dcd3c4;
+  --neutral-400: #c0b6a5;
+  --neutral-500: #a19786;
+  --neutral-600: #82796a;
+  --neutral-700: #645c50;
+  --neutral-800: #474238;
+  --neutral-900: #2e2b25;
 
-  /* Neutrals */
-  --background: #f8f9f4;
-  --foreground: #1a1a1a;
-  --muted: #6b7280;
-  --card-bg: #ffffff;
-  --card-border: #e5e7e0;
+  /* Terracotta ramp — action + detection */
+  --accent-100: #fff2eb;
+  --accent-200: #ffe1d0;
+  --accent-300: #ffc6a5;
+  --accent-400: #f6a06b;
+  --accent-500: #d67f48;
+  --accent-600: #b2622d;
+  --accent-700: #8c491a;
+  --accent-800: #643312;
+  --accent-900: #402310;
+  --accent: #c67139;
+
+  /* Sage ramp — confirmed, safe, terrain */
+  --sage-100: #f0fae1;
+  --sage-200: #e1eecc;
+  --sage-300: #ccdbb2;
+  --sage-400: #aebf92;
+  --sage-500: #8fa073;
+  --sage-600: #728157;
+  --sage-700: #56633f;
+  --sage-800: #3d472b;
+  --sage-900: #272e1b;
+  --sage: #7a8a5e;
+
+  /* Risk ramp — low · medium · high · critical */
+  --risk-low: #aebf92;
+  --risk-medium: #f6a06b;
+  --risk-high: #d67f48;
+  --risk-critical: #c9503c;
+
+  /* Error / danger surfaces */
+  --clay-surface: #f7e4de;
+  --clay-border: #d9a89c;
+  --clay-text: #8c2f22;
+  --clay-text-deep: #5e1e15;
+
+  /* Legacy aliases — keep older call sites compiling during the migration */
+  --background: var(--sand);
+  --foreground: var(--ink);
+  --muted: rgba(32, 30, 29, 0.62);
+  --card-bg: var(--sand-surface);
+  --card-border: var(--divider);
 
   /* Font families (set by next/font in layout.tsx) */
-  --font-heading: var(--font-syne);
-  --font-body: var(--font-dm-sans);
+  --font-heading: var(--font-caprasimo);
+  --font-body: var(--font-figtree);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, "Cascadia Mono", monospace;
+
+  /* Radii — 999px on controls, 26–32px on panels and cards */
+  --radius-control: 999px;
+  --radius-card: 26px;
+  --radius-panel: 32px;
+
+  /* Elevation — soft ink-tinted shadows */
+  --shadow-sm: 0 1px 2px rgba(46, 43, 37, 0.14);
+  --shadow-md: 0 3px 10px rgba(46, 43, 37, 0.16);
+  --shadow-lg: 0 12px 32px rgba(46, 43, 37, 0.22);
 }
 
 /* ------------------------------------------------------------------ */
@@ -39,29 +97,72 @@
 /* ------------------------------------------------------------------ */
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--sand);
+  --color-foreground: var(--ink);
   --color-muted: var(--muted);
 
-  --color-green-900: var(--green-900);
-  --color-green-700: var(--green-700);
-  --color-green-500: var(--green-500);
-  --color-green-300: var(--green-300);
-  --color-green-100: var(--green-100);
+  --color-sand: var(--sand);
+  --color-sand-surface: var(--sand-surface);
+  --color-ink: var(--ink);
+  --color-divider: var(--divider);
 
-  --color-amber-500: var(--amber-500);
-  --color-amber-300: var(--amber-300);
+  --color-night: var(--night);
+  --color-night-panel: var(--night-panel);
+  --color-night-land: var(--night-land);
+  --color-night-text: var(--night-text);
+
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+
+  --color-accent: var(--accent);
+  --color-accent-100: var(--accent-100);
+  --color-accent-200: var(--accent-200);
+  --color-accent-300: var(--accent-300);
+  --color-accent-400: var(--accent-400);
+  --color-accent-500: var(--accent-500);
+  --color-accent-600: var(--accent-600);
+  --color-accent-700: var(--accent-700);
+  --color-accent-800: var(--accent-800);
+  --color-accent-900: var(--accent-900);
+
+  --color-sage: var(--sage);
+  --color-sage-100: var(--sage-100);
+  --color-sage-200: var(--sage-200);
+  --color-sage-300: var(--sage-300);
+  --color-sage-400: var(--sage-400);
+  --color-sage-500: var(--sage-500);
+  --color-sage-600: var(--sage-600);
+  --color-sage-700: var(--sage-700);
+  --color-sage-800: var(--sage-800);
+  --color-sage-900: var(--sage-900);
 
   --color-risk-low: var(--risk-low);
   --color-risk-medium: var(--risk-medium);
   --color-risk-high: var(--risk-high);
   --color-risk-critical: var(--risk-critical);
 
+  --color-clay-surface: var(--clay-surface);
+  --color-clay-border: var(--clay-border);
+  --color-clay-text: var(--clay-text);
+  --color-clay-deep: var(--clay-text-deep);
+
   --color-card-bg: var(--card-bg);
   --color-card-border: var(--card-border);
 
-  --font-heading: var(--font-syne);
-  --font-body: var(--font-dm-sans);
+  --font-heading: var(--font-caprasimo);
+  --font-body: var(--font-figtree);
+  --font-mono: var(--font-mono);
+
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+  --radius-panel: var(--radius-panel);
 }
 
 /* ------------------------------------------------------------------ */
@@ -69,13 +170,46 @@
 /* ------------------------------------------------------------------ */
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body), "DM Sans", system-ui, sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+  font-family: var(--font-body), "Figtree", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading), "Syne", system-ui, sans-serif;
+  font-family: var(--font-heading), "Caprasimo", system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--accent) 30%, transparent);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Typography helpers                                                 */
+/* ------------------------------------------------------------------ */
+
+/* Every number a user might compare gets mono + tabular figures, so
+   values align down a column. See the "rules of thumb" in the design. */
+.mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small uppercase panel label / eyebrow. */
+.eyebrow {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
 }
 
 /* ------------------------------------------------------------------ */
@@ -86,6 +220,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   z-index: 0;
+  background: var(--night);
 }
 
 .leaflet-pane,
@@ -103,6 +238,71 @@ h1, h2, h3, h4, h5, h6 {
   height: 30px !important;
   line-height: 30px !important;
   font-size: 16px !important;
+  background: var(--night-panel) !important;
+  color: var(--night-text) !important;
+  border-color: rgba(240, 233, 217, 0.14) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: var(--night-land) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(25, 29, 22, 0.85) !important;
+  color: rgba(240, 233, 217, 0.6) !important;
+  border-radius: 999px !important;
+  padding: 2px 10px !important;
+  font-size: 10px !important;
+}
+
+.leaflet-control-attribution a {
+  color: var(--sage-300) !important;
+}
+
+/* Warms CARTO's neutral dark basemap toward the olive-ink ground the rest
+   of the operations surface uses. The tiles are already dark, so this only
+   shifts hue and takes a little contrast out — it must not darken further. */
+.elefind-night-tiles {
+  filter: sepia(0.35) hue-rotate(35deg) saturate(0.85) brightness(1.05);
+}
+
+/* Popups sit on the map, so they take the night ground too — otherwise the
+   sand-coloured popup text would land on Leaflet's default white bubble. */
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: var(--night-panel) !important;
+  color: var(--night-text) !important;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+}
+
+.leaflet-popup-content-wrapper {
+  border: 1px solid rgba(240, 233, 217, 0.14) !important;
+  border-radius: 20px !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+}
+
+.leaflet-popup-close-button {
+  color: rgba(240, 233, 217, 0.6) !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: var(--night-text) !important;
+}
+
+.leaflet-tooltip {
+  background: var(--night-panel) !important;
+  color: var(--night-text) !important;
+  border: 1px solid rgba(240, 233, 217, 0.14) !important;
+  border-radius: 999px !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.leaflet-tooltip::before {
+  border-top-color: var(--night-panel) !important;
+  border-bottom-color: var(--night-panel) !important;
 }
 
 /* ------------------------------------------------------------------ */
@@ -116,13 +316,4 @@ h1, h2, h3, h4, h5, h6 {
 
 .animate-fade-in {
   animation: fade-in 0.4s ease-out;
-}
-
-@keyframes pulse-slow {
-  0%, 100% { opacity: 1; }
-  50%      { opacity: 0.6; }
-}
-
-.animate-pulse-slow {
-  animation: pulse-slow 2s ease-in-out infinite;
 }
