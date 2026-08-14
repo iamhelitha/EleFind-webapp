@@ -169,10 +169,10 @@ export default async function Home() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/map"
+                href="/alerts"
                 className="inline-flex items-center gap-2 rounded-full border border-[rgba(240,233,217,0.35)] px-6 py-3 text-[15px] font-semibold text-night-text transition-colors hover:bg-[rgba(240,233,217,0.1)]"
               >
-                Explore the map
+                Get alerts near me
               </Link>
             </div>
 
@@ -392,17 +392,17 @@ export default async function Home() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
-                href="/signup"
+                href="/alerts"
                 className="inline-flex items-center gap-2 rounded-full bg-accent px-[22px] py-2.5 text-sm font-semibold text-sand transition-colors hover:bg-accent-600"
               >
-                Create an account
+                Register my area
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                href="/map"
+                href="/alerts"
                 className="inline-flex items-center gap-2 rounded-full border border-divider px-[22px] py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[rgba(32,30,29,0.07)]"
               >
-                See recent sightings
+                See a sample alert
               </Link>
             </div>
           </div>

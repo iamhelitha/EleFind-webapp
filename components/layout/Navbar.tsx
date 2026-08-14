@@ -18,6 +18,7 @@ import BrandMark from "@/components/brand/BrandMark";
 const NAV_LINKS = [
   { href: "/detect", label: "Detect" },
   { href: "/map", label: "Map" },
+  { href: "/alerts", label: "Alerts" },
 ] as const;
 
 /** Routes that render on the ink ground and want matching chrome. */
@@ -28,6 +29,7 @@ const ROUTE_TAG: Record<string, string> = {
   "/map": "MAP",
   "/detect": "DETECT",
   "/admin": "OPS",
+  "/alerts": "ALERTS",
 };
 
 export default function Navbar() {
