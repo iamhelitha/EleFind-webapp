@@ -199,7 +199,7 @@ export default async function Home() {
 
       {/* ─── The problem ───────────────────────────────────────────── */}
       <section className="grid bg-sand md:grid-cols-2">
-        <div className="border-divider px-4 py-12 sm:px-8 md:border-r lg:py-14">
+        <div className="border-divider px-4 py-12 sm:px-8 sm:py-14 md:border-r lg:py-16 xl:px-12">
           <h6 className="eyebrow m-0 mb-4 text-accent">The problem</h6>
           <h2 className="m-0 max-w-[14ch] text-[clamp(28px,4vw,38px)] leading-[1.06]">
             One of Asia&rsquo;s deadliest borders is a field edge.
@@ -210,7 +210,7 @@ export default async function Home() {
             discovery earlier.
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 px-4 py-12 sm:px-8 lg:py-14">
+        <div className="grid grid-cols-1 gap-8 px-4 py-12 sm:grid-cols-2 sm:px-8 sm:py-14 lg:py-16 xl:px-12">
           <div>
             <div className="mono text-[clamp(40px,6vw,58px)] leading-[0.9] text-accent-700">
               100+
@@ -231,208 +231,198 @@ export default async function Home() {
       </section>
 
       {/* ─── Why EleFind ───────────────────────────────────────────── */}
-      <section className="bg-sand-surface px-4 py-14 sm:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="grid bg-sand-surface lg:grid-cols-[1.15fr_1fr]">
+        <div className="flex flex-col justify-center border-divider px-4 py-12 sm:px-8 sm:py-14 lg:border-r lg:py-16 xl:px-12">
           <h6 className="eyebrow m-0 mb-3.5 text-accent">Why EleFind?</h6>
-          <div className="grid items-start gap-10 lg:grid-cols-[1.15fr_1fr]">
-            <div>
-              <h2 className="m-0 max-w-[20ch] text-[clamp(28px,4vw,38px)] leading-[1.06]">
-                Aerial detection that does more than draw boxes.
-              </h2>
-              <p className="mt-4.5 max-w-[52ch] text-[15px] leading-[1.65] text-[rgba(32,30,29,0.75)]">
-                EleFind turns geotagged drone imagery into mapped elephant
-                sightings through a browser-accessible workflow — aerial-image
-                detection, geographic visualisation, confidence filtering,
-                community-recorded crossing zones and proximity alerts in one
-                platform.
+          <h2 className="m-0 max-w-[20ch] text-[clamp(28px,4vw,38px)] leading-[1.06]">
+            Aerial detection that does more than draw boxes.
+          </h2>
+          <p className="mt-4.5 max-w-[52ch] text-[15px] leading-[1.65] text-[rgba(32,30,29,0.75)]">
+            EleFind turns geotagged drone imagery into mapped elephant
+            sightings through a browser-accessible workflow — aerial-image
+            detection, geographic visualisation, confidence filtering,
+            community-recorded crossing zones and proximity alerts in one
+            platform.
+          </p>
+        </div>
+        <div className="grid content-center gap-3.5 px-4 py-12 sm:grid-cols-2 sm:px-8 sm:py-14 lg:py-16 xl:px-12">
+          {CAPABILITIES.map(({ n, tone, text }) => (
+            <div
+              key={n}
+              className="flex flex-col gap-2.5 rounded-card bg-sand p-5"
+            >
+              <span
+                className={`mono grid h-[34px] w-[34px] place-items-center rounded-full text-xs ${
+                  tone === "accent"
+                    ? "bg-accent-200 text-accent-800"
+                    : "bg-sage-200 text-sage-800"
+                }`}
+              >
+                {n}
+              </span>
+              <p className="m-0 text-[14.5px] font-semibold leading-[1.45]">
+                {text}
               </p>
             </div>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              {CAPABILITIES.map(({ n, tone, text }) => (
-                <div
-                  key={n}
-                  className="flex flex-col gap-2.5 rounded-card bg-sand p-5"
-                >
-                  <span
-                    className={`mono grid h-[34px] w-[34px] place-items-center rounded-full text-xs ${
-                      tone === "accent"
-                        ? "bg-accent-200 text-accent-800"
-                        : "bg-sage-200 text-sage-800"
-                    }`}
-                  >
-                    {n}
-                  </span>
-                  <p className="m-0 text-[14.5px] font-semibold leading-[1.45]">
-                    {text}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* ─── Research evidence ─────────────────────────────────────── */}
-      <section className="bg-sand px-4 py-14 sm:px-8">
-        <div className="mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-[1.1fr_1fr]">
-          <div>
-            <h6 className="eyebrow m-0 mb-3.5 text-accent">Research evidence</h6>
-            <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
-              Preliminary end-to-end validation
-            </h2>
-            <p className="mt-4.5 max-w-[50ch] text-[15px] leading-[1.65] text-[rgba(32,30,29,0.75)]">
-              In six geotagged drone images containing 26 human-annotated
-              elephants, EleFind produced 25 correct detections, one false
-              positive and one missed detection — confirming the complete
-              image-to-map workflow as a functional research prototype.
-            </p>
+      <section className="grid bg-sand lg:grid-cols-[1.1fr_1fr]">
+        <div className="border-divider px-4 py-12 sm:px-8 sm:py-14 lg:border-r lg:py-16 xl:px-12">
+          <h6 className="eyebrow m-0 mb-3.5 text-accent">Research evidence</h6>
+          <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
+            Preliminary end-to-end validation
+          </h2>
+          <p className="mt-4.5 max-w-[50ch] text-[15px] leading-[1.65] text-[rgba(32,30,29,0.75)]">
+            In six geotagged drone images containing 26 human-annotated
+            elephants, EleFind produced 25 correct detections, one false
+            positive and one missed detection — confirming the complete
+            image-to-map workflow as a functional research prototype.
+          </p>
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              {VALIDATION_CHIPS.map(({ value, label }) => (
-                <div
-                  key={label}
-                  className="rounded-[22px] bg-sand-surface px-[18px] py-3.5"
-                >
-                  <div className="mono text-[26px]">{value}</div>
-                  <div className="mt-0.5 text-[11.5px] text-[rgba(32,30,29,0.6)]">
-                    {label}
-                  </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {VALIDATION_CHIPS.map(({ value, label }) => (
+              <div
+                key={label}
+                className="rounded-[22px] bg-sand-surface px-[18px] py-3.5"
+              >
+                <div className="mono text-[26px]">{value}</div>
+                <div className="mt-0.5 text-[11.5px] text-[rgba(32,30,29,0.6)]">
+                  {label}
                 </div>
-              ))}
-              <div className="max-w-[26ch] rounded-[22px] bg-sage-100 px-[18px] py-3.5">
-                <span className="inline-flex items-center rounded-full bg-sage-200 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
-                  Preliminary
-                </span>
-                <p className="mt-2 text-[11.5px] leading-[1.45] text-sage-900">
-                  Sample too small to generalise — not a field-accuracy claim.
-                </p>
               </div>
+            ))}
+            <div className="max-w-[26ch] rounded-[22px] bg-sage-100 px-[18px] py-3.5">
+              <span className="inline-flex items-center rounded-full bg-sage-200 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
+                Preliminary
+              </span>
+              <p className="mt-2 text-[11.5px] leading-[1.45] text-sage-900">
+                Sample too small to generalise — not a field-accuracy claim.
+              </p>
             </div>
-
-            {/* Live totals — supporting detail, deliberately not the headline. */}
-            <dl className="mono mt-6 flex flex-wrap gap-x-7 gap-y-2 border-t border-divider pt-5 text-[12px] text-[rgba(32,30,29,0.6)]">
-              <div>
-                <dt className="inline">detections recorded </dt>
-                <dd className="inline text-[15px] text-ink">
-                  {live.detections}
-                </dd>
-              </div>
-              <div>
-                <dt className="inline">crossing zones </dt>
-                <dd className="inline text-[15px] text-ink">{live.zones}</dd>
-              </div>
-              <div>
-                <dt className="inline">mean confidence </dt>
-                <dd className="inline text-[15px] text-ink">
-                  {live.meanConfidence}
-                </dd>
-              </div>
-            </dl>
           </div>
 
+          {/* Live totals — supporting detail, deliberately not the headline. */}
+          <dl className="mono mt-6 flex flex-wrap gap-x-7 gap-y-2 border-t border-divider pt-5 text-[12px] text-[rgba(32,30,29,0.6)]">
+            <div>
+              <dt className="inline">detections recorded </dt>
+              <dd className="inline text-[15px] text-ink">
+                {live.detections}
+              </dd>
+            </div>
+            <div>
+              <dt className="inline">crossing zones </dt>
+              <dd className="inline text-[15px] text-ink">{live.zones}</dd>
+            </div>
+            <div>
+              <dt className="inline">mean confidence </dt>
+              <dd className="inline text-[15px] text-ink">
+                {live.meanConfidence}
+              </dd>
+            </div>
+          </dl>
+        </div>
+
+        <div className="flex flex-col justify-center px-4 py-12 sm:px-8 sm:py-14 lg:py-16 xl:px-12">
           <AnnotatedFramePlaceholder />
         </div>
       </section>
 
       {/* ─── Explainability ────────────────────────────────────────── */}
-      <section className="bg-night-panel px-4 py-14 text-night-text sm:px-8">
-        <div className="mx-auto max-w-7xl">
+      <section className="grid bg-night-panel text-night-text lg:grid-cols-[1fr_1.15fr]">
+        <div className="flex flex-col justify-center border-[rgba(240,233,217,0.14)] px-4 py-12 sm:px-8 sm:py-14 lg:border-r lg:py-16 xl:px-12">
           <h6 className="eyebrow m-0 mb-3.5 text-accent-400">Explainability</h6>
-          <div className="grid items-center gap-10 lg:grid-cols-[1fr_1.15fr]">
-            <div>
-              <h2 className="m-0 max-w-[20ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08] text-sand">
-                Detection you can visually inspect
-              </h2>
-              <p className="mt-4.5 max-w-[46ch] text-[15px] leading-[1.65] text-[rgba(240,233,217,0.75)]">
-                Explainability visualisations show the model concentrating on
-                visible elephant body regions rather than unrelated background
-                features such as vegetation, water, bare ground or shadows.
-              </p>
-            </div>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              <div className="relative aspect-square overflow-hidden rounded-[24px] bg-gradient-to-br from-[#7f8464] to-[#5c6349]">
-                <span className="absolute left-[26%] top-[32%] w-[22%] rounded-[4px] border-2 border-accent-400 pb-[18.3%]" />
-                <span className="absolute left-[56%] top-[54%] w-[18%] rounded-[4px] border-2 border-accent-400 pb-[15%]" />
-                <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
-                  detection
-                </span>
-              </div>
-              <div
-                className="relative aspect-square overflow-hidden rounded-[24px]"
-                style={{
-                  background:
-                    "radial-gradient(22% 22% at 35% 42%, #ffd6a0, rgba(214,127,72,.65) 45%, transparent 72%), radial-gradient(18% 18% at 64% 62%, #ffc6a5, rgba(214,127,72,.5) 45%, transparent 72%), linear-gradient(120deg, #3d472b, #272e1b)",
-                }}
-              >
-                <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
-                  Grad-CAM · placeholder
-                </span>
-              </div>
-            </div>
+          <h2 className="m-0 max-w-[20ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08] text-sand">
+            Detection you can visually inspect
+          </h2>
+          <p className="mt-4.5 max-w-[46ch] text-[15px] leading-[1.65] text-[rgba(240,233,217,0.75)]">
+            Explainability visualisations show the model concentrating on
+            visible elephant body regions rather than unrelated background
+            features such as vegetation, water, bare ground or shadows.
+          </p>
+        </div>
+        <div className="grid content-center gap-3.5 px-4 py-12 sm:grid-cols-2 sm:px-8 sm:py-14 lg:py-16 xl:px-12">
+          <div className="relative aspect-square overflow-hidden rounded-[24px] bg-gradient-to-br from-[#7f8464] to-[#5c6349]">
+            <span className="absolute left-[26%] top-[32%] w-[22%] rounded-[4px] border-2 border-accent-400 pb-[18.3%]" />
+            <span className="absolute left-[56%] top-[54%] w-[18%] rounded-[4px] border-2 border-accent-400 pb-[15%]" />
+            <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
+              detection
+            </span>
+          </div>
+          <div
+            className="relative aspect-square overflow-hidden rounded-[24px]"
+            style={{
+              background:
+                "radial-gradient(22% 22% at 35% 42%, #ffd6a0, rgba(214,127,72,.65) 45%, transparent 72%), radial-gradient(18% 18% at 64% 62%, #ffc6a5, rgba(214,127,72,.5) 45%, transparent 72%), linear-gradient(120deg, #3d472b, #272e1b)",
+            }}
+          >
+            <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
+              Grad-CAM · placeholder
+            </span>
           </div>
         </div>
       </section>
 
       {/* ─── Community alerts ──────────────────────────────────────── */}
-      <section className="bg-accent-100 px-4 py-12 sm:px-8">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
-          <div>
-            <h6 className="eyebrow m-0 mb-3.5 text-accent-800">
-              Community alerts
-            </h6>
-            <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
-              Live near the corridor? Ask to be warned.
-            </h2>
-            <p className="mt-4.5 max-w-[50ch] text-[15px] leading-[1.65] text-accent-900">
-              Register the area you live in and pick a radius. When an officer
-              verifies a sighting inside it, EleFind sends an SMS in your
-              language — with what was seen, how far away, and what to do next.
-              Your home location is stored coarsely and never shown on the
-              public map.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/alerts"
-                className="inline-flex items-center gap-2 rounded-full bg-accent px-[22px] py-2.5 text-sm font-semibold text-sand transition-colors hover:bg-accent-600"
-              >
-                Register my area
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                href="/alerts"
-                className="inline-flex items-center gap-2 rounded-full border border-divider px-[22px] py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[rgba(32,30,29,0.07)]"
-              >
-                See a sample alert
-              </Link>
-            </div>
+      <section className="grid bg-accent-100 lg:grid-cols-[1.1fr_1fr]">
+        <div className="flex flex-col justify-center border-accent-200 px-4 py-12 sm:px-8 sm:py-14 lg:border-r lg:py-16 xl:px-12">
+          <h6 className="eyebrow m-0 mb-3.5 text-accent-800">
+            Community alerts
+          </h6>
+          <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
+            Live near the corridor? Ask to be warned.
+          </h2>
+          <p className="mt-4.5 max-w-[50ch] text-[15px] leading-[1.65] text-accent-900">
+            Register the area you live in and pick a radius. When an officer
+            verifies a sighting inside it, EleFind sends an SMS in your
+            language — with what was seen, how far away, and what to do next.
+            Your home location is stored coarsely and never shown on the
+            public map.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link
+              href="/alerts"
+              className="inline-flex items-center gap-2 rounded-full bg-accent px-[22px] py-2.5 text-sm font-semibold text-sand transition-colors hover:bg-accent-600"
+            >
+              Register my area
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/alerts"
+              className="inline-flex items-center gap-2 rounded-full border border-divider px-[22px] py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-[rgba(32,30,29,0.07)]"
+            >
+              See a sample alert
+            </Link>
           </div>
+        </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="flex-1 rounded-card bg-sand p-[18px]">
-              <div className="mono text-[10.5px] uppercase tracking-[0.08em] text-[rgba(32,30,29,0.5)]">
-                SMS · 18:26
-              </div>
-              <p className="m-0 mt-2 text-[13.5px] leading-[1.55]">
-                EleFind: 4 elephants seen ~3 km north-east of Hingurakgoda at
-                18:24. Avoid the Minneriya road tonight. Reply STOP to
-                unsubscribe.
-              </p>
+        <div className="flex flex-col items-stretch justify-center gap-3.5 px-4 py-12 sm:flex-row sm:items-center sm:px-8 sm:py-14 lg:py-16 xl:px-12">
+          <div className="flex-1 rounded-card bg-sand p-[18px]">
+            <div className="mono text-[10.5px] uppercase tracking-[0.08em] text-[rgba(32,30,29,0.5)]">
+              SMS · 18:26
             </div>
-            <div className="flex w-[150px] flex-none flex-col gap-2.5">
-              <div className="rounded-[22px] bg-sand p-3.5">
-                <div className="mono text-[22px]">SMS</div>
-                <div className="mt-0.5 text-[11px] text-[rgba(32,30,29,0.6)]">
-                  in Sinhala, Tamil or English
-                </div>
+            <p className="m-0 mt-2 text-[13.5px] leading-[1.55]">
+              EleFind: 4 elephants seen ~3 km north-east of Hingurakgoda at
+              18:24. Avoid the Minneriya road tonight. Reply STOP to
+              unsubscribe.
+            </p>
+          </div>
+          <div className="flex flex-none flex-col gap-2.5 sm:w-[150px]">
+            <div className="rounded-[22px] bg-sand p-3.5">
+              <div className="mono text-[22px]">SMS</div>
+              <div className="mt-0.5 text-[11px] text-[rgba(32,30,29,0.6)]">
+                in Sinhala, Tamil or English
               </div>
-              <div className="rounded-[22px] bg-sand p-3.5">
-                <div className="mono flex items-center gap-1.5 text-[15px]">
-                  <Lock className="h-3.5 w-3.5" />
-                  5 km grid
-                </div>
-                <div className="mt-0.5 text-[11px] text-[rgba(32,30,29,0.6)]">
-                  home location stored coarsely
-                </div>
+            </div>
+            <div className="rounded-[22px] bg-sand p-3.5">
+              <div className="mono flex items-center gap-1.5 text-[15px]">
+                <Lock className="h-3.5 w-3.5" />
+                5 km grid
+              </div>
+              <div className="mt-0.5 text-[11px] text-[rgba(32,30,29,0.6)]">
+                home location stored coarsely
               </div>
             </div>
           </div>
@@ -440,8 +430,8 @@ export default async function Home() {
       </section>
 
       {/* ─── Honest limits ─────────────────────────────────────────── */}
-      <section className="bg-sand-surface px-4 py-12 sm:px-8">
-        <div className="mx-auto grid max-w-7xl gap-4 md:grid-cols-3">
+      <section className="bg-sand-surface px-4 py-12 sm:px-8 sm:py-14 lg:py-16 xl:px-12">
+        <div className="grid gap-4 md:grid-cols-3">
           {LIMITS.map(({ heading, body, className, headingClass }) => (
             <div key={heading} className={`rounded-card p-[22px] ${className}`}>
               <h6 className={`eyebrow m-0 mb-2.5 ${headingClass}`}>{heading}</h6>
