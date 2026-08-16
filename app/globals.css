@@ -220,7 +220,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   z-index: 0;
-  background: var(--night);
+  background: var(--sand-surface);
 }
 
 .leaflet-pane,
@@ -238,45 +238,37 @@ h1, h2, h3, h4, h5, h6 {
   height: 30px !important;
   line-height: 30px !important;
   font-size: 16px !important;
-  background: var(--night-panel) !important;
-  color: var(--night-text) !important;
-  border-color: rgba(240, 233, 217, 0.14) !important;
+  background: var(--sand) !important;
+  color: var(--ink) !important;
+  border-color: var(--divider) !important;
 }
 
 .leaflet-control-zoom a:hover {
-  background: var(--night-land) !important;
+  background: var(--sand-surface) !important;
 }
 
 .leaflet-control-attribution {
-  background: rgba(25, 29, 22, 0.85) !important;
-  color: rgba(240, 233, 217, 0.6) !important;
+  background: rgba(245, 234, 216, 0.85) !important;
+  color: rgba(32, 30, 29, 0.6) !important;
   border-radius: 999px !important;
   padding: 2px 10px !important;
   font-size: 10px !important;
 }
 
 .leaflet-control-attribution a {
-  color: var(--sage-300) !important;
+  color: var(--sage-700) !important;
 }
 
-/* Warms CARTO's neutral dark basemap toward the olive-ink ground the rest
-   of the operations surface uses. The tiles are already dark, so this only
-   shifts hue and takes a little contrast out — it must not darken further. */
-.elefind-night-tiles {
-  filter: sepia(0.35) hue-rotate(35deg) saturate(0.85) brightness(1.05);
-}
-
-/* Popups sit on the map, so they take the night ground too — otherwise the
-   sand-coloured popup text would land on Leaflet's default white bubble. */
+/* Popups and tooltips sit on the light map ground. */
 .leaflet-popup-content-wrapper,
 .leaflet-popup-tip {
-  background: var(--night-panel) !important;
-  color: var(--night-text) !important;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45) !important;
+  background: var(--sand) !important;
+  color: var(--ink) !important;
+  box-shadow: var(--shadow-lg) !important;
 }
 
 .leaflet-popup-content-wrapper {
-  border: 1px solid rgba(240, 233, 217, 0.14) !important;
+  border: 1px solid var(--divider) !important;
   border-radius: 20px !important;
 }
 
@@ -285,24 +277,24 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .leaflet-popup-close-button {
-  color: rgba(240, 233, 217, 0.6) !important;
+  color: rgba(32, 30, 29, 0.5) !important;
 }
 
 .leaflet-popup-close-button:hover {
-  color: var(--night-text) !important;
+  color: var(--ink) !important;
 }
 
 .leaflet-tooltip {
-  background: var(--night-panel) !important;
-  color: var(--night-text) !important;
-  border: 1px solid rgba(240, 233, 217, 0.14) !important;
+  background: var(--sand) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--divider) !important;
   border-radius: 999px !important;
   box-shadow: var(--shadow-md) !important;
 }
 
 .leaflet-tooltip::before {
-  border-top-color: var(--night-panel) !important;
-  border-bottom-color: var(--night-panel) !important;
+  border-top-color: var(--sand) !important;
+  border-bottom-color: var(--sand) !important;
 }
 
 /* ------------------------------------------------------------------ */

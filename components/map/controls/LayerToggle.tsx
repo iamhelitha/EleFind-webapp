@@ -24,7 +24,7 @@ export default function LayerToggle({
   return (
     <button
       onClick={onToggle}
-      className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-[rgba(240,233,217,0.10)] transition-colors"
+      className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left hover:bg-[rgba(32,30,29,0.06)] transition-colors"
     >
       <span
         className="flex h-5 w-5 items-center justify-center rounded"
@@ -36,11 +36,11 @@ export default function LayerToggle({
           <EyeOff className="h-4 w-4 opacity-40" />
         )}
       </span>
-      <span className={`flex-1 text-sm ${enabled ? "text-night-text" : "text-[rgba(240,233,217,0.55)]"}`}>
+      <span className={`flex-1 text-sm ${enabled ? "text-ink" : "text-[rgba(32,30,29,0.55)]"}`}>
         {label}
       </span>
       {count !== undefined && (
-        <span className="text-xs text-[rgba(240,233,217,0.55)] tabular-nums">{count}</span>
+        <span className="text-xs text-[rgba(32,30,29,0.55)] tabular-nums">{count}</span>
       )}
     </button>
   );

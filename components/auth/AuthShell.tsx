@@ -52,7 +52,7 @@ export default function AuthShell({
           </div>
 
           <Link href="/" className="relative flex items-center gap-2.5">
-            <BrandMark size={30} ringColor="var(--night-panel)" />
+            <BrandMark size={30} />
             <span className="font-heading text-[19px]">EleFind</span>
           </Link>
 
@@ -88,7 +88,7 @@ export default function AuthShell({
               href="/"
               className="mb-6 flex items-center gap-2.5 lg:hidden"
             >
-              <BrandMark size={28} ringColor="var(--sand)" />
+              <BrandMark size={28} />
               <span className="font-heading text-[18px]">EleFind</span>
             </Link>
 

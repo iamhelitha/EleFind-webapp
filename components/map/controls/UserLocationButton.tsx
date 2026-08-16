@@ -62,7 +62,7 @@ export default function UserLocationButton({
         transition-colors disabled:opacity-60
         ${
           hasLocation
-            ? "bg-[rgba(25,29,22,0.92)] backdrop-blur-md text-night-text border border-sage-300"
+            ? "bg-[rgba(245,234,216,0.92)] backdrop-blur-md text-ink border border-sage-300"
             : "bg-accent text-white hover:bg-accent-600"
         }
       `}

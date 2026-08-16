@@ -18,10 +18,10 @@ export default async function AdminLayout({
       {/* Sidebar */}
       <aside className="w-52 shrink-0 bg-night-panel flex flex-col">
         <div className="px-4 py-3 border-b border-[rgba(240,233,217,0.14)]">
-          <p className="text-[10px] font-bold text-green-400 uppercase tracking-widest">
+          <p className="text-[10px] font-bold text-accent-400 uppercase tracking-widest">
             Admin Panel
           </p>
-          <p className="text-xs text-green-200 mt-0.5 truncate font-medium">
+          <p className="text-xs text-sage-300 mt-0.5 truncate font-medium">
             {user.name ?? user.email}
           </p>
         </div>

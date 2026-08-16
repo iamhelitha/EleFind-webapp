@@ -33,7 +33,7 @@ export default function CrossingZonesPanel({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-semibold text-night-text">
+        <span className="text-xs font-semibold text-ink">
           Crossing Zones ({zones.length})
         </span>
         {user && (
@@ -44,7 +44,7 @@ export default function CrossingZonesPanel({
                 flex items-center gap-1 rounded-md px-2 py-1 text-[10px] font-semibold transition-colors
                 ${isDrawingMode
                   ? "bg-accent-400 text-white"
-                  : "border border-[rgba(240,233,217,0.14)] text-[rgba(240,233,217,0.55)] hover:border-sage-300 hover:text-accent-400"
+                  : "border border-[rgba(32,30,29,0.14)] text-[rgba(32,30,29,0.55)] hover:border-sage-300 hover:text-accent-700"
                 }
               `}
             >
@@ -63,8 +63,8 @@ export default function CrossingZonesPanel({
       </div>
 
       {zones.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-[rgba(240,233,217,0.14)] p-4 text-center">
-          <p className="text-xs text-[rgba(240,233,217,0.55)]">No crossing zones mapped yet.</p>
+        <div className="rounded-lg border-2 border-dashed border-[rgba(32,30,29,0.14)] p-4 text-center">
+          <p className="text-xs text-[rgba(32,30,29,0.55)]">No crossing zones mapped yet.</p>
         </div>
       ) : (
         <div className="space-y-1.5 max-h-[400px] overflow-y-auto">
@@ -75,8 +75,8 @@ export default function CrossingZonesPanel({
                 rounded-lg border p-2.5 transition-all
                 ${
                   selectedZoneId === zone.id
-                    ? "border-sage-500 bg-night-land/50 ring-1 ring-accent"
-                    : "border-[rgba(240,233,217,0.14)] hover:border-sage-300 hover:bg-[rgba(240,233,217,0.10)]/30"
+                    ? "border-sage-500 bg-sand-surface/50 ring-1 ring-accent"
+                    : "border-[rgba(32,30,29,0.14)] hover:border-sage-300 hover:bg-[rgba(32,30,29,0.06)]/30"
                 }
               `}
             >
@@ -89,15 +89,15 @@ export default function CrossingZonesPanel({
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <p className="truncate text-xs font-bold text-night-text">
+                    <p className="truncate text-xs font-bold text-ink">
                       {zone.name}
                     </p>
                     {zone.description && (
-                      <p className="mt-0.5 text-[10px] text-[rgba(240,233,217,0.55)] line-clamp-1">
+                      <p className="mt-0.5 text-[10px] text-[rgba(32,30,29,0.55)] line-clamp-1">
                         {zone.description}
                       </p>
                     )}
-                    <p className="mt-0.5 text-[10px] text-[rgba(240,233,217,0.55)]">
+                    <p className="mt-0.5 text-[10px] text-[rgba(32,30,29,0.55)]">
                       {new Date(zone.createdAt).toLocaleDateString()}
                     </p>
                   </div>

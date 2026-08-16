@@ -37,10 +37,10 @@ interface MapPageContentProps {
 const EleMap = dynamic(() => import("@/components/map/EleMap"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full items-center justify-center bg-night-land">
+    <div className="flex h-full items-center justify-center bg-sand-surface">
       <div className="flex flex-col items-center gap-2">
         <Spinner size="lg" />
-        <p className="text-sm text-[rgba(240,233,217,0.55)]">Loading map...</p>
+        <p className="text-sm text-[rgba(32,30,29,0.55)]">Loading map...</p>
       </div>
     </div>
   ),
@@ -209,7 +209,7 @@ export default function MapPageContent({
           onClick={() => setMobileOpen((v) => !v)}
           className={`
             flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold shadow-md transition-colors
-            ${mobileOpen ? "bg-accent text-white" : "bg-[rgba(25,29,22,0.92)] backdrop-blur-md text-night-text border border-[rgba(240,233,217,0.14)]"}
+            ${mobileOpen ? "bg-accent text-white" : "bg-[rgba(245,234,216,0.92)] backdrop-blur-md text-ink border border-[rgba(32,30,29,0.14)]"}
           `}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
@@ -225,7 +225,7 @@ export default function MapPageContent({
         >
           <div className="absolute inset-0 bg-black/30" />
           <div
-            className="absolute top-0 bottom-0 right-0 w-80 max-w-[85vw] bg-[rgba(25,29,22,0.92)] backdrop-blur-md shadow-xl overflow-y-auto"
+            className="absolute top-0 bottom-0 right-0 w-80 max-w-[85vw] bg-[rgba(245,234,216,0.92)] backdrop-blur-md shadow-xl overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-3 space-y-3">
@@ -348,7 +348,7 @@ function SidebarContent({
           onClick={onRefresh}
           disabled={isRefreshing}
           title="Refresh detections"
-          className="flex items-center justify-center rounded-lg border border-[rgba(240,233,217,0.14)] bg-[rgba(25,29,22,0.92)] backdrop-blur-md px-2.5 py-1.5 text-xs text-accent-400 hover:bg-[rgba(240,233,217,0.10)] disabled:opacity-50 transition-colors"
+          className="flex items-center justify-center rounded-lg border border-[rgba(32,30,29,0.14)] bg-[rgba(245,234,216,0.92)] backdrop-blur-md px-2.5 py-1.5 text-xs text-accent-700 hover:bg-[rgba(32,30,29,0.06)] disabled:opacity-50 transition-colors"
         >
           <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? "animate-spin" : ""}`} />
         </button>
@@ -373,11 +373,11 @@ function SidebarContent({
       />
 
       {/* Separator */}
-      <div className="border-t border-[rgba(240,233,217,0.14)]" />
+      <div className="border-t border-[rgba(32,30,29,0.14)]" />
 
       {/* Layer toggles */}
       <div>
-        <h4 className="text-xs font-semibold text-night-text mb-1 px-1">Layers</h4>
+        <h4 className="text-xs font-semibold text-ink mb-1 px-1">Layers</h4>
         <LayerToggle
           label="Detections"
           enabled={filters.showDetections}
@@ -404,35 +404,35 @@ function SidebarContent({
 
       {/* Date filters */}
       <div className="space-y-2">
-        <h4 className="text-xs font-semibold text-night-text px-1">Date Range</h4>
+        <h4 className="text-xs font-semibold text-ink px-1">Date Range</h4>
         <div className="px-1 space-y-1.5">
           <label className="block">
-            <span className="text-[10px] text-[rgba(240,233,217,0.55)]">From</span>
+            <span className="text-[10px] text-[rgba(32,30,29,0.55)]">From</span>
             <input
               type="date"
               value={filters.dateFrom ?? ""}
               onChange={(e) =>
                 updateFilter({ dateFrom: e.target.value || null })
               }
-              className="w-full rounded-full border border-[rgba(240,233,217,0.14)] bg-[rgba(240,233,217,0.08)] px-3 py-1.5 text-xs text-night-text [color-scheme:dark] focus:border-accent-400 focus:outline-none"
+              className="w-full rounded-full border border-[rgba(32,30,29,0.14)] bg-[rgba(32,30,29,0.04)] px-3 py-1.5 text-xs text-ink [color-scheme:light] focus:border-accent-400 focus:outline-none"
             />
           </label>
           <label className="block">
-            <span className="text-[10px] text-[rgba(240,233,217,0.55)]">To</span>
+            <span className="text-[10px] text-[rgba(32,30,29,0.55)]">To</span>
             <input
               type="date"
               value={filters.dateTo ?? ""}
               onChange={(e) =>
                 updateFilter({ dateTo: e.target.value || null })
               }
-              className="w-full rounded-full border border-[rgba(240,233,217,0.14)] bg-[rgba(240,233,217,0.08)] px-3 py-1.5 text-xs text-night-text [color-scheme:dark] focus:border-accent-400 focus:outline-none"
+              className="w-full rounded-full border border-[rgba(32,30,29,0.14)] bg-[rgba(32,30,29,0.04)] px-3 py-1.5 text-xs text-ink [color-scheme:light] focus:border-accent-400 focus:outline-none"
             />
           </label>
         </div>
       </div>
 
       {/* Separator */}
-      <div className="border-t border-[rgba(240,233,217,0.14)]" />
+      <div className="border-t border-[rgba(32,30,29,0.14)]" />
 
       {/* Legend */}
       <Legend
@@ -441,7 +441,7 @@ function SidebarContent({
       />
 
       {/* Separator */}
-      <div className="border-t border-[rgba(240,233,217,0.14)]" />
+      <div className="border-t border-[rgba(32,30,29,0.14)]" />
 
       {/* All detections — always visible, click to fly to location */}
       <DetectionsListPanel
@@ -450,7 +450,7 @@ function SidebarContent({
         onSelect={onSelectDetection}
       />
 
-      <div className="border-t border-[rgba(240,233,217,0.14)]" />
+      <div className="border-t border-[rgba(32,30,29,0.14)]" />
 
       {/* Nearest detections (only when user location is available) */}
       {userLocation && (
@@ -461,7 +461,7 @@ function SidebarContent({
             userLng={userLocation.lng}
             onSelect={onSelectDetection}
           />
-          <div className="border-t border-[rgba(240,233,217,0.14)]" />
+          <div className="border-t border-[rgba(32,30,29,0.14)]" />
         </>
       )}
 

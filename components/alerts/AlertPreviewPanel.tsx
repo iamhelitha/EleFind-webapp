@@ -156,8 +156,8 @@ export default function AlertPreviewPanel() {
           ))}
         </ul>
         <p className="m-0 border-t border-divider pt-2.5 text-[11.5px] leading-[1.5] text-[rgba(32,30,29,0.6)]">
-          Alerts are a research decision-support service, not an emergency line.
-          In danger, contact the DWC hotline 1919.
+          Alerts are a research decision-support service, not an emergency
+          line. In danger, contact your local wildlife authority.
         </p>
       </div>
     </div>

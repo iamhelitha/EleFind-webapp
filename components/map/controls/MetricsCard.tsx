@@ -18,16 +18,16 @@ export default function MetricsCard({
   subtitle,
 }: MetricsCardProps) {
   return (
-    <div className="rounded-lg border border-[rgba(240,233,217,0.14)] bg-night-land/50 p-3">
+    <div className="rounded-lg border border-[rgba(32,30,29,0.14)] bg-sand-surface/50 p-3">
       <div className="flex items-center gap-2">
-        {icon && <span className="text-accent-400">{icon}</span>}
-        <span className="text-xs font-medium text-[rgba(240,233,217,0.55)]">{label}</span>
+        {icon && <span className="text-accent-700">{icon}</span>}
+        <span className="text-xs font-medium text-[rgba(32,30,29,0.55)]">{label}</span>
       </div>
-      <p className="mt-1 text-lg font-bold text-night-text tabular-nums">
+      <p className="mt-1 text-lg font-bold text-ink tabular-nums">
         {value}
       </p>
       {subtitle && (
-        <p className="text-xs text-[rgba(240,233,217,0.55)]">{subtitle}</p>
+        <p className="text-xs text-[rgba(32,30,29,0.55)]">{subtitle}</p>
       )}
     </div>
   );

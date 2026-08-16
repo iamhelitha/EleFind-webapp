@@ -38,7 +38,7 @@ export default function AdminSidebarNav() {
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                   isActive
                     ? "bg-accent text-white"
-                    : "text-green-200 hover:bg-accent-600 hover:text-white"
+                    : "text-sage-300 hover:bg-accent-600 hover:text-white"
                 }`}
               >
                 <Icon className="h-4 w-4 shrink-0" />
@@ -52,7 +52,7 @@ export default function AdminSidebarNav() {
       <div className="p-2 border-t border-[rgba(240,233,217,0.14)]">
         <Link
           href="/map"
-          className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-green-400 hover:text-green-200 hover:bg-accent-600 transition-colors"
+          className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs text-accent-400 hover:text-sage-300 hover:bg-accent-600 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" />
           Back to app

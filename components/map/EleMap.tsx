@@ -46,9 +46,8 @@ interface EleMapProps {
 const SRI_LANKA_CENTER: [number, number] = [7.8731, 80.7718];
 const DEFAULT_ZOOM = 8;
 
-/** Dark basemap — the design puts the map on the night operations ground. */
-const CARTO_DARK_MATTER =
-  "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
+const CARTO_POSITRON =
+  "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png";
 const CARTO_ATTRIBUTION =
   '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/">CARTO</a>';
 
@@ -196,11 +195,7 @@ export default function EleMap({
       className={`w-full h-full ${className}`}
       scrollWheelZoom={true}
     >
-      <TileLayer
-        url={CARTO_DARK_MATTER}
-        attribution={CARTO_ATTRIBUTION}
-        className="elefind-night-tiles"
-      />
+      <TileLayer url={CARTO_POSITRON} attribution={CARTO_ATTRIBUTION} />
 
       {/* Detection markers */}
       {visibleDetections.map((d) => (
