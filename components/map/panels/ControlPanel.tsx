@@ -25,15 +25,15 @@ export default function ControlPanel({
       {/* Sidebar content */}
       <div
         className={`
-          flex flex-col bg-card-bg border-r border-card-border
+          flex flex-col bg-[rgba(245,234,216,0.92)] backdrop-blur-md border-r border-[rgba(32,30,29,0.14)]
           transition-all duration-300 ease-in-out overflow-hidden
           ${collapsed ? "w-0 min-w-0 border-r-0" : "w-72 min-w-[18rem]"}
         `}
       >
         {!collapsed && (
           <div className="flex flex-col h-full overflow-y-auto animate-fade-in">
-            <div className="px-4 py-3 border-b border-card-border">
-              <h2 className="font-heading text-sm font-bold text-green-900">
+            <div className="px-4 py-3 border-b border-[rgba(32,30,29,0.14)]">
+              <h2 className="font-heading text-sm font-bold text-ink">
                 {title}
               </h2>
             </div>
@@ -47,13 +47,13 @@ export default function ControlPanel({
       {/* Toggle button - rendered outside overflow container */}
       <button
         onClick={onToggle}
-        className="absolute -right-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-card-border bg-card-bg shadow-sm hover:bg-green-50 transition-colors"
+        className="absolute -right-3 top-4 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-[rgba(32,30,29,0.14)] bg-[rgba(245,234,216,0.92)] backdrop-blur-md shadow-sm hover:bg-[rgba(32,30,29,0.06)] transition-colors"
         aria-label={collapsed ? "Expand controls" : "Collapse controls"}
       >
         {collapsed ? (
-          <ChevronRight className="h-3.5 w-3.5 text-green-700" />
+          <ChevronRight className="h-3.5 w-3.5 text-accent-700" />
         ) : (
-          <ChevronLeft className="h-3.5 w-3.5 text-green-700" />
+          <ChevronLeft className="h-3.5 w-3.5 text-accent-700" />
         )}
       </button>
     </div>

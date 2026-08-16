@@ -12,19 +12,19 @@ export default async function AdminCrossingsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="font-heading text-xl font-bold text-green-900">Crossing Zones</h1>
+        <h1 className="font-heading text-xl font-bold text-ink">Crossing Zones</h1>
         <p className="text-xs text-muted mt-0.5">{rows.length} zone{rows.length !== 1 ? "s" : ""} total</p>
       </div>
 
-      <div className="rounded-xl border border-card-border bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-divider bg-sand shadow-sm overflow-hidden">
         <table className="w-full text-xs">
-          <thead className="bg-green-50 border-b border-card-border">
+          <thead className="bg-sand border-b border-divider">
             <tr>
               {["Name", "Risk Level", "Confirms", "Credibility", "Created", "Actions"].map(
                 (h) => (
                   <th
                     key={h}
-                    className="px-3 py-2.5 text-left font-semibold text-green-900 uppercase tracking-wide whitespace-nowrap"
+                    className="px-3 py-2.5 text-left font-semibold text-ink uppercase tracking-wide whitespace-nowrap"
                   >
                     {h}
                   </th>

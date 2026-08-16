@@ -22,7 +22,7 @@ export default function DeleteDetectionButton({ id }: { id: string }) {
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="rounded px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 border border-red-200 disabled:opacity-50 transition-colors"
+      className="rounded px-2 py-1 text-xs font-medium text-clay-text hover:bg-clay-surface border border-clay-border disabled:opacity-50 transition-colors"
     >
       {loading ? "…" : "Delete"}
     </button>

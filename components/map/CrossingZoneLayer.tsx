@@ -30,9 +30,9 @@ export default function CrossingZoneLayer({ zone }: CrossingZoneLayerProps) {
     >
       <Popup>
         <div className="min-w-[180px] text-sm space-y-1">
-          <p className="font-bold text-green-900">{zone.name}</p>
+          <p className="font-bold text-ink">{zone.name}</p>
           {zone.description && (
-            <p className="text-muted">{zone.description}</p>
+            <p className="text-[rgba(32,30,29,0.55)]">{zone.description}</p>
           )}
           <div className="flex items-center gap-2 pt-1">
             <Badge variant={riskVariant[zone.riskLevel]}>

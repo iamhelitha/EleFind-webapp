@@ -35,16 +35,16 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const CONF_BADGE = (conf: number) => {
-    if (conf >= 0.85) return "bg-green-100 text-green-800";
-    if (conf >= 0.6) return "bg-amber-100 text-amber-800";
-    return "bg-red-100 text-red-800";
+    if (conf >= 0.85) return "bg-sand-surface text-ink";
+    if (conf >= 0.6) return "bg-accent-100 text-accent-800";
+    return "bg-clay-surface text-clay-deep";
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-heading text-xl font-bold text-green-900">Detections</h1>
+          <h1 className="font-heading text-xl font-bold text-ink">Detections</h1>
           <p className="text-xs text-muted mt-0.5">{total.toLocaleString()} records</p>
         </div>
 
@@ -57,7 +57,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
             <select
               name="source"
               defaultValue={source}
-              className="rounded-lg border border-card-border px-2.5 py-1.5 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="rounded-lg border border-divider px-2.5 py-1.5 text-xs bg-sand focus:outline-none focus:ring-2 focus:ring-accent"
             >
               <option value="">All sources</option>
               <option value="drone">Drone</option>
@@ -76,21 +76,21 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
               step="0.05"
               defaultValue={minConf || ""}
               placeholder="0.00"
-              className="rounded-lg border border-card-border px-2.5 py-1.5 text-xs w-24 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="rounded-lg border border-divider px-2.5 py-1.5 text-xs w-24 bg-sand focus:outline-none focus:ring-2 focus:ring-accent"
             />
           </div>
           <button
             type="submit"
-            className="rounded-lg bg-green-700 text-white px-3 py-1.5 text-xs font-semibold hover:bg-green-800 transition-colors"
+            className="rounded-lg bg-accent text-white px-3 py-1.5 text-xs font-semibold hover:bg-accent-600 transition-colors"
           >
             Apply
           </button>
         </form>
       </div>
 
-      <div className="rounded-xl border border-card-border bg-white shadow-sm overflow-hidden">
+      <div className="rounded-xl border border-divider bg-sand shadow-sm overflow-hidden">
         <table className="w-full text-xs">
-          <thead className="bg-green-50 border-b border-card-border">
+          <thead className="bg-sand border-b border-divider">
             <tr>
               {[
                 "Image",
@@ -104,7 +104,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
               ].map((h) => (
                 <th
                   key={h}
-                  className="px-3 py-2.5 text-left font-semibold text-green-900 uppercase tracking-wide whitespace-nowrap"
+                  className="px-3 py-2.5 text-left font-semibold text-ink uppercase tracking-wide whitespace-nowrap"
                 >
                   {h}
                 </th>
@@ -123,7 +123,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
               </tr>
             ) : (
               rows.map((d) => (
-                <tr key={d.id} className="hover:bg-gray-50 transition-colors">
+                <tr key={d.id} className="hover:bg-neutral-100 transition-colors">
                   <td className="px-3 py-2.5 text-muted max-w-[120px] truncate">
                     {d.image_name ?? "—"}
                   </td>
@@ -139,7 +139,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
                       {(d.confidence * 100).toFixed(1)}%
                     </span>
                   </td>
-                  <td className="px-3 py-2.5 text-center font-semibold text-green-900">
+                  <td className="px-3 py-2.5 text-center font-semibold text-ink">
                     {d.elephant_count}
                   </td>
                   <td className="px-3 py-2.5 text-muted capitalize">{d.source_type}</td>
@@ -169,7 +169,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
             {page > 1 && (
               <a
                 href={`?page=${page - 1}&source=${source}&minConf=${minConf}`}
-                className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-card-border bg-white text-xs hover:border-green-400 hover:bg-green-50 transition-colors"
+                className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-divider bg-sand text-xs hover:border-green-400 hover:bg-sand transition-colors"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
               </a>
@@ -177,7 +177,7 @@ export default async function AdminDetectionsPage({ searchParams }: PageProps) {
             {page < totalPages && (
               <a
                 href={`?page=${page + 1}&source=${source}&minConf=${minConf}`}
-                className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-card-border bg-white text-xs hover:border-green-400 hover:bg-green-50 transition-colors"
+                className="inline-flex items-center justify-center h-7 w-7 rounded-lg border border-divider bg-sand text-xs hover:border-green-400 hover:bg-sand transition-colors"
               >
                 <ChevronRight className="h-3.5 w-3.5" />
               </a>

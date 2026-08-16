@@ -5,11 +5,6 @@ import toast from "react-hot-toast";
 import exifr from "exifr";
 import {
   Camera,
-  Cpu,
-  Layers,
-  BarChart3,
-  CheckCircle2,
-  Zap,
   ChevronDown,
   ChevronUp,
   MapPin,
@@ -17,6 +12,7 @@ import {
 } from "lucide-react";
 import ImageUploader from "@/components/detection/ImageUploader";
 import DetectionResults from "@/components/detection/DetectionResults";
+import PipelineBand from "@/components/detection/PipelineBand";
 import Card from "@/components/ui/Card";
 import { runDetectionFromBrowser } from "@/lib/gradio-browser";
 import type {
@@ -27,19 +23,13 @@ import type {
 /**
  * Batch-capable detection page.
  *
- * Structure:
- *  1. Full-width header with pipeline visualisation (unchanged — user liked it)
- *  2. Unified detection panel: upload queue + results in one area
- *  3. Expandable per-image results below the queue
+ * Structure, following the redesign:
+ *  1. Sand band stating the workflow, with the four pipeline step cards
+ *     carrying real counts (see PipelineBand)
+ *  2. Two columns on wide screens — upload queue on the left, review on
+ *     the right; stacked on narrow screens
+ *  3. Expandable per-image results in the review column
  */
-
-/* ── Pipeline steps shown in the header ────────────────────────── */
-const PIPELINE_STEPS = [
-  { icon: Camera, label: "Upload", desc: "Aerial / drone image" },
-  { icon: Layers, label: "SAHI Slicing", desc: "Tile-based inference" },
-  { icon: Cpu, label: "YOLOv11", desc: "Object detection" },
-  { icon: BarChart3, label: "Results", desc: "Annotated output" },
-] as const;
 
 export default function DetectPage() {
   const [items, setItems] = useState<BatchItem[]>([]);
@@ -187,238 +177,176 @@ export default function DetectPage() {
     []
   );
 
-  // Calculate pipeline step based on current item's status
-  const currentItem = currentIndex >= 0 ? items[currentIndex] : null;
-  const currentStatus = currentItem?.status ?? "idle";
-  const activeStep =
-    currentStatus === "idle" || currentStatus === "done" || currentStatus === "error"
-      ? -1
-      : currentStatus === "uploading"
-        ? 0
-        : currentStatus === "connecting"
-          ? 1
-          : currentStatus === "detecting"
-            ? 2
-            : 3;
-
   // Summary stats
   const doneItems = items.filter((i) => i.status === "done");
   const totalElephants = doneItems.reduce(
     (sum, i) => sum + (i.result?.elephantCount ?? 0),
     0
   );
+  const meanConfidence =
+    doneItems.length > 0
+      ? doneItems.reduce((sum, i) => sum + (i.result?.avgConfidence ?? 0), 0) /
+        doneItems.length
+      : 0;
+
 
   return (
     <div className="animate-fade-in">
-      {/* ─── Page Header with Pipeline ──────────────────────────── */}
-      <div className="bg-green-900 text-white">
-        <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-9 lg:px-8">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-green-700/60 px-3 py-1 text-xs font-semibold text-green-100">
-                <Zap className="h-3.5 w-3.5" />
-                YOLOv11 + SAHI Pipeline
-              </div>
-              <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
-                Elephant Detection
-              </h1>
-              <p className="mt-2 max-w-xl text-sm text-green-100/80">
-                Upload aerial or drone images to detect elephants. Supports
-                batch processing — queue multiple images and run them through
-                the SAHI + YOLOv11 inference pipeline in sequence.
-              </p>
-            </div>
-
-            {/* Pipeline visualisation — desktop */}
-            <div className="hidden lg:flex items-center gap-2">
-              {PIPELINE_STEPS.map(({ icon: Icon, label, desc }, i) => {
-                const isActive = i === activeStep;
-                const isDone = activeStep > i || (doneItems.length > 0 && !isProcessing);
-                return (
-                  <div key={label} className="flex items-center gap-2">
-                    <div
-                      className={`
-                        flex flex-col items-center rounded-xl px-4 py-3 text-center transition-all duration-300
-                        ${isActive ? "bg-amber-500/20 ring-1 ring-amber-500/50 scale-105" : ""}
-                        ${isDone ? "opacity-100" : isActive ? "opacity-100" : "opacity-50"}
-                      `}
-                    >
-                      <div
-                        className={`rounded-lg p-2 ${
-                          isDone && !isActive
-                            ? "bg-green-500/20"
-                            : isActive
-                              ? "bg-amber-500/20"
-                              : "bg-green-700/30"
-                        }`}
-                      >
-                        {isDone && !isActive ? (
-                          <CheckCircle2 className="h-5 w-5 text-green-300" />
-                        ) : (
-                          <Icon
-                            className={`h-5 w-5 ${isActive ? "text-amber-500 animate-pulse-slow" : "text-green-300"}`}
-                          />
-                        )}
-                      </div>
-                      <span className="mt-1.5 text-xs font-semibold">{label}</span>
-                      <span className="text-[10px] text-green-300/70">{desc}</span>
-                    </div>
-                    {i < PIPELINE_STEPS.length - 1 && (
-                      <div
-                        className={`h-px w-6 ${isDone && !isActive ? "bg-green-300" : "bg-green-700"} transition-colors`}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+      {/* ─── Workflow band ──────────────────────────────────────── */}
+      <section className="border-b border-divider bg-sand-surface">
+        <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-baseline sm:gap-4">
+            <h1 className="m-0 text-[clamp(22px,3vw,28px)]">
+              Upload → Detect → Review → Map
+            </h1>
+            <p className="m-0 max-w-[62ch] text-[13.5px] leading-[1.5] text-[rgba(32,30,29,0.7)]">
+              Upload one or more aerial images. EleFind identifies possible
+              elephants, returns annotated results and confidence scores, and
+              maps the sighting automatically when GPS metadata is available.
+            </p>
           </div>
 
-          {/* Pipeline — mobile */}
-          <div className="mt-6 flex lg:hidden gap-1">
-            {PIPELINE_STEPS.map(({ label }, i) => {
-              const isDone = activeStep > i || (doneItems.length > 0 && !isProcessing);
-              const isActive = i === activeStep;
-              return (
-                <div key={label} className="flex-1">
-                  <div
-                    className={`
-                      h-1.5 rounded-full transition-all duration-500
-                      ${isDone ? "bg-green-300" : isActive ? "bg-amber-500 animate-pulse-slow" : "bg-green-700"}
-                    `}
-                  />
-                  <span className="mt-1 block text-center text-[10px] text-green-300/60">
-                    {label}
-                  </span>
-                </div>
-              );
-            })}
+          <div className="mt-4">
+            <PipelineBand
+              items={items}
+              isProcessing={isProcessing}
+              currentIndex={currentIndex}
+            />
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ─── Main Content: Unified Detection Panel ─────────────── */}
-      <div className="mx-auto max-w-5xl space-y-4 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-        {/* Unified card: queue + upload live here together */}
-        <Card className="p-4 sm:p-5">
-          <ImageUploader
-            items={items}
-            setItems={setItems}
-            onRunBatch={runBatch}
-            isProcessing={isProcessing}
-            currentIndex={currentIndex}
-          />
-        </Card>
+      {/* ─── Queue + review ─────────────────────────────────────── */}
+      <div className="mx-auto grid max-w-7xl gap-5 px-4 py-6 sm:px-6 lg:px-8 xl:grid-cols-[400px_1fr] xl:items-start">
+        {/* Left column — upload, queue, SAHI parameters */}
+        <div className="flex flex-col gap-4">
+          <Card className="p-4 sm:p-5">
+            <ImageUploader
+              items={items}
+              setItems={setItems}
+              onRunBatch={runBatch}
+              isProcessing={isProcessing}
+              currentIndex={currentIndex}
+            />
+          </Card>
 
-        {/* ─── Batch summary bar ────────────────────────────────── */}
-        {doneItems.length > 0 && (
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div className="h-px flex-1 bg-card-border" />
-            <div className="flex items-center gap-2 rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-900 sm:px-4 sm:py-1.5 sm:text-sm">
-              <CheckCircle2 className="h-4 w-4 text-green-700" />
-              {doneItems.length} image{doneItems.length !== 1 ? "s" : ""}{" "}
-              processed &middot; {totalElephants} elephant
-              {totalElephants !== 1 ? "s" : ""} found
-            </div>
-            <div className="h-px flex-1 bg-card-border" />
+          <div className="flex items-start gap-2.5 rounded-card bg-accent-100 px-4 py-3.5">
+            <span className="mt-1.5 h-2 w-2 flex-none rounded-full bg-accent" />
+            <p className="m-0 text-[12.5px] leading-[1.5] text-accent-900">
+              <strong>Manual review recommended</strong> in dense canopy or heavy
+              occlusion. Detections you reject never reach the map.
+            </p>
           </div>
-        )}
+        </div>
 
-        {/* ─── Per-image results (expandable) ───────────────────── */}
-        {doneItems.length > 0 && (
-          <div className="space-y-2.5">
-            {items
-              .filter((i) => i.status === "done" && i.result)
-              .map((item) => {
+        {/* Right column — review */}
+        <section className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            <h2 className="m-0 text-[clamp(20px,2.5vw,28px)]">Review</h2>
+            {doneItems.length > 0 ? (
+              <span className="mono text-xs text-[rgba(32,30,29,0.55)]">
+                {doneItems.length} frame{doneItems.length === 1 ? "" : "s"} ·{" "}
+                {totalElephants} candidate{totalElephants === 1 ? "" : "s"} ·
+                mean {meanConfidence.toFixed(2)}
+              </span>
+            ) : (
+              <span className="mono text-xs text-[rgba(32,30,29,0.55)]">
+                results appear here once a frame finishes
+              </span>
+            )}
+          </div>
+
+          {doneItems.length === 0 ? (
+            <div className="rounded-panel border border-dashed border-neutral-400 bg-sand-surface px-6 py-14 text-center">
+              <p className="m-0 text-sm text-[rgba(32,30,29,0.6)]">
+                Nothing to review yet. Queue an aerial frame on the left and run
+                detection.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-2.5">
+              {doneItems.map((item) => {
+                const result = item.result;
+                if (!result) return null;
+
                 const isExpanded = expandedItem === item.id;
                 return (
                   <Card key={item.id} className="overflow-hidden">
-                    {/* Accordion header */}
                     <button
                       onClick={() =>
                         setExpandedItem(isExpanded ? null : item.id)
                       }
-                      className="w-full cursor-pointer px-4 py-3 text-left transition-colors hover:bg-green-100/20 sm:px-5 sm:py-4"
+                      aria-expanded={isExpanded}
+                      className="flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors hover:bg-[rgba(32,30,29,0.04)] sm:px-5"
                     >
-                      <div className="flex items-center gap-3">
-                        {/* Thumbnail */}
-                        {item.previewUrl ? (
-                          <img
-                            src={item.previewUrl}
-                            alt=""
-                            className="h-10 w-10 shrink-0 rounded-lg object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100">
-                            <Camera className="h-5 w-5 text-green-500" />
-                          </div>
-                        )}
+                      {item.previewUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={item.previewUrl}
+                          alt=""
+                          className="h-10 w-10 shrink-0 rounded-xl object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-300">
+                          <Camera className="h-5 w-5 text-neutral-700" />
+                        </div>
+                      )}
 
-                        <div className="min-w-0 flex-1">
-                          <p className="truncate text-sm font-semibold text-green-900">
-                            {item.file.name}
-                          </p>
-                          <p className="text-xs text-muted">
-                            {item.result!.elephantCount} elephant
-                            {item.result!.elephantCount !== 1 ? "s" : ""} detected
-                            {item.result!.elephantCount > 0 &&
-                              ` · avg ${(item.result!.avgConfidence * 100).toFixed(1)}% confidence`}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5 mt-0.5">
-                            {item.result!.location && (
-                              <span className="flex items-center gap-1 text-[10px] text-muted">
-                                <MapPin className="h-3 w-3" />
-                                {item.result!.location.lat.toFixed(5)}°,{" "}
-                                {item.result!.location.lng.toFixed(5)}°
-                              </span>
-                            )}
-                            {item.result!.detectedAt && (
-                              <span className="flex items-center gap-1 text-[10px] text-muted">
-                                <Clock className="h-3 w-3" />
-                                {new Date(item.result!.detectedAt).toLocaleString()}
-                              </span>
-                            )}
-                          </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="mono m-0 truncate text-[13px]">
+                          {item.file.name}
+                        </p>
+                        <p className="mono m-0 mt-1 text-[10.5px] text-sage-700">
+                          {result.elephantCount} candidate
+                          {result.elephantCount === 1 ? "" : "s"}
+                          {result.elephantCount > 0 &&
+                            ` · mean ${result.avgConfidence.toFixed(2)}`}
+                        </p>
+                        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5">
+                          {result.location && (
+                            <span className="mono flex items-center gap-1 text-[10px] text-[rgba(32,30,29,0.5)]">
+                              <MapPin className="h-3 w-3" />
+                              {result.location.lat.toFixed(4)},{" "}
+                              {result.location.lng.toFixed(4)}
+                            </span>
+                          )}
+                          {result.detectedAt && (
+                            <span className="mono flex items-center gap-1 text-[10px] text-[rgba(32,30,29,0.5)]">
+                              <Clock className="h-3 w-3" />
+                              {new Date(result.detectedAt).toLocaleString()}
+                            </span>
+                          )}
                         </div>
                       </div>
 
-                      {/* Elephant count badge */}
                       <span
-                        className={`rounded-full px-3 py-1 text-xs font-bold shrink-0 ${
-                          item.result!.elephantCount > 0
-                            ? "bg-green-100 text-green-700"
-                            : "bg-amber-100 text-amber-700"
+                        className={`mono shrink-0 rounded-full px-3 py-1 text-[11px] font-semibold ${
+                          result.elephantCount > 0
+                            ? "bg-sage-200 text-sage-800"
+                            : "bg-neutral-200 text-neutral-700"
                         }`}
                       >
-                        {item.result!.elephantCount}
+                        {result.elephantCount}
                       </span>
 
-                      {/* Expand arrow */}
                       {isExpanded ? (
-                        <ChevronUp className="h-4 w-4 text-muted shrink-0" />
+                        <ChevronUp className="h-4 w-4 shrink-0 text-[rgba(32,30,29,0.5)]" />
                       ) : (
-                        <ChevronDown className="h-4 w-4 text-muted shrink-0" />
+                        <ChevronDown className="h-4 w-4 shrink-0 text-[rgba(32,30,29,0.5)]" />
                       )}
                     </button>
 
-                    {/* Expanded result */}
                     {isExpanded && (
-                      <div className="animate-fade-in border-t border-card-border px-4 py-4 sm:px-5 sm:py-5">
-                        <DetectionResults result={item.result!} />
+                      <div className="animate-fade-in border-t border-divider px-4 py-4 sm:px-5 sm:py-5">
+                        <DetectionResults result={result} />
                       </div>
                     )}
                   </Card>
                 );
               })}
-          </div>
-        )}
-
-        {/* ─── Compact helper when queue is empty ─────────────────── */}
-        {items.length === 0 && (
-          <p className="px-1 text-center text-xs text-muted">
-            Results will appear below after processing starts.
-          </p>
-        )}
+            </div>
+          )}
+        </section>
       </div>
     </div>
   );

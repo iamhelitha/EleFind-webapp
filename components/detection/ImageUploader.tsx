@@ -155,7 +155,7 @@ export default function ImageUploader({
 
   const statusIcon = (item: BatchItem, index: number) => {
     if (item.status === "done") {
-      return <CheckCircle2 className="h-4 w-4 text-green-500 shrink-0" />;
+      return <CheckCircle2 className="h-4 w-4 text-sage-600 shrink-0" />;
     }
     if (item.status === "error") {
       return <AlertCircle className="h-4 w-4 text-risk-high shrink-0" />;
@@ -165,7 +165,7 @@ export default function ImageUploader({
       index === currentIndex &&
       item.status !== "idle"
     ) {
-      return <Loader2 className="h-4 w-4 text-amber-500 animate-spin shrink-0" />;
+      return <Loader2 className="h-4 w-4 text-accent-500 animate-spin shrink-0" />;
     }
     return <FileImage className="h-4 w-4 text-muted/50 shrink-0" />;
   };
@@ -207,7 +207,7 @@ export default function ImageUploader({
           relative flex flex-col items-center justify-center rounded-xl border-2 border-dashed
           transition-colors
           ${items.length === 0 ? "p-5 sm:p-6" : "p-4"}
-          ${dragOver ? "border-green-500 bg-green-100/40" : "border-card-border hover:border-green-300 hover:bg-green-100/10"}
+          ${dragOver ? "border-sage-500 bg-sand-surface/40" : "border-divider hover:border-sage-300 hover:bg-sand-surface/10"}
         `}
       >
         <input
@@ -224,11 +224,11 @@ export default function ImageUploader({
           <div className="w-full">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-start gap-3">
-                <div className="rounded-xl bg-green-100 p-2.5 shrink-0">
-                  <Upload className="h-5 w-5 text-green-600" />
+                <div className="rounded-xl bg-sand-surface p-2.5 shrink-0">
+                  <Upload className="h-5 w-5 text-sage-700" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-green-900">
+                  <p className="text-sm font-semibold text-ink">
                     Upload aerial images
                   </p>
                   <p className="mt-0.5 text-xs text-muted">
@@ -247,7 +247,7 @@ export default function ImageUploader({
                 Choose Images
               </Button>
             </div>
-            <p className="mt-2 text-[11px] text-green-700/90">
+            <p className="mt-2 text-[11px] text-accent-700/90">
               Batch mode is enabled — you can queue multiple images.
             </p>
           </div>
@@ -257,11 +257,11 @@ export default function ImageUploader({
             {/* Queue header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold text-green-900">
+                <span className="text-sm font-semibold text-ink">
                   {items.length} image{items.length !== 1 ? "s" : ""} in queue
                 </span>
                 {doneCount > 0 && (
-                  <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                  <span className="rounded-full bg-sand-surface px-2 py-0.5 text-xs font-medium text-accent-700">
                     {doneCount} done &middot; {totalElephants} elephant
                     {totalElephants !== 1 ? "s" : ""} found
                   </span>
@@ -271,7 +271,7 @@ export default function ImageUploader({
                 <button
                   onClick={() => inputRef.current?.click()}
                   disabled={isProcessing}
-                  className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-green-700 hover:bg-green-100 transition-colors disabled:opacity-50"
+                  className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-medium text-accent-700 hover:bg-sand-surface transition-colors disabled:opacity-50"
                 >
                   <Plus className="h-3.5 w-3.5" />
                   Add More
@@ -295,7 +295,7 @@ export default function ImageUploader({
                   key={item.id}
                   className={`
                     flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors
-                    ${i === currentIndex && isProcessing ? "bg-amber-500/10 ring-1 ring-amber-500/30" : "bg-green-100/20 hover:bg-green-100/40"}
+                    ${i === currentIndex && isProcessing ? "bg-accent-400/10 ring-1 ring-accent-400/30" : "bg-sand-surface/20 hover:bg-sand-surface/40"}
                     ${item.status === "done" ? "opacity-70" : ""}
                   `}
                 >
@@ -307,14 +307,14 @@ export default function ImageUploader({
                       className="h-9 w-9 rounded-md object-cover shrink-0"
                     />
                   ) : (
-                    <div className="h-9 w-9 rounded-md bg-green-100 flex items-center justify-center shrink-0">
-                      <ImageIcon className="h-4 w-4 text-green-500" />
+                    <div className="h-9 w-9 rounded-md bg-sand-surface flex items-center justify-center shrink-0">
+                      <ImageIcon className="h-4 w-4 text-sage-600" />
                     </div>
                   )}
 
                   {/* File info */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-green-900 truncate">
+                    <p className="text-xs font-medium text-ink truncate">
                       {item.file.name}
                     </p>
                     <p className="text-[10px] text-muted">
@@ -328,7 +328,7 @@ export default function ImageUploader({
                     <span
                       className={`text-xs ${
                         item.status === "done"
-                          ? "text-green-700 font-medium"
+                          ? "text-accent-700 font-medium"
                           : item.status === "error"
                             ? "text-risk-high"
                             : "text-muted"
@@ -342,7 +342,7 @@ export default function ImageUploader({
                   {!isProcessing && item.status !== "done" && (
                     <button
                       onClick={() => removeItem(item.id)}
-                      className="rounded-full p-1 hover:bg-red-100 text-muted hover:text-risk-high transition-colors shrink-0"
+                      className="rounded-full p-1 hover:bg-clay-surface text-muted hover:text-risk-high transition-colors shrink-0"
                       aria-label="Remove"
                     >
                       <X className="h-3.5 w-3.5" />
@@ -362,14 +362,14 @@ export default function ImageUploader({
         <div>
           <button
             onClick={() => setShowParams(!showParams)}
-            className="inline-flex items-center gap-1.5 text-sm font-medium text-green-700 hover:text-green-900 transition-colors"
+            className="inline-flex items-center gap-1.5 text-sm font-medium text-accent-700 hover:text-ink transition-colors"
           >
             <SlidersHorizontal className="h-4 w-4" />
             {showParams ? "Hide" : "Show"} Detection Parameters
           </button>
 
           {showParams && (
-            <div className="mt-2.5 animate-fade-in grid gap-3 rounded-xl border border-card-border bg-green-100/20 p-3.5 sm:grid-cols-2">
+            <div className="mt-2.5 animate-fade-in grid gap-3 rounded-xl border border-divider bg-sand-surface/20 p-3.5 sm:grid-cols-2">
               <SliderField
                 label="Confidence Threshold"
                 value={confThreshold}
@@ -413,7 +413,7 @@ export default function ImageUploader({
 
       {/* ─── Run batch button ─────────────────────────────────────── */}
       {items.length > 0 && (
-        <div className="flex flex-col gap-2 rounded-xl border border-card-border bg-green-100/10 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 rounded-xl border border-divider bg-sand-surface/10 px-3 py-2.5 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-xs text-muted">
             {isProcessing
               ? `Processing ${currentIndex + 1} of ${items.length}`
@@ -474,7 +474,7 @@ function SliderField({
           step={step}
           value={value}
           onChange={(e) => onChange(parseFloat(e.target.value))}
-          className="flex-1 accent-green-700"
+          className="flex-1 accent-[var(--accent)]"
         />
         <span className="w-12 text-right text-sm font-mono text-foreground">
           {format(value)}

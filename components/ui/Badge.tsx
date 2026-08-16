@@ -1,10 +1,20 @@
 /**
  * Small status badge for labels, risk levels, and counts.
+ *
+ * Colour meaning follows the design system: sage means confirmed / safe,
+ * terracotta means action or detection, clay is reserved for CRITICAL
+ * and errors. Badges are pill-shaped like every other small control.
  */
 
 import type { RiskLevel } from "@/types";
 
-type BadgeVariant = "default" | "success" | "warning" | "danger" | "critical";
+type BadgeVariant =
+  | "default"
+  | "success"
+  | "warning"
+  | "danger"
+  | "critical"
+  | "night";
 
 interface BadgeProps {
   children: React.ReactNode;
@@ -13,11 +23,12 @@ interface BadgeProps {
 }
 
 const variantStyles: Record<BadgeVariant, string> = {
-  default: "bg-green-100 text-green-900",
-  success: "bg-risk-low/20 text-green-900",
-  warning: "bg-amber-500/20 text-amber-500",
-  danger: "bg-risk-high/20 text-risk-high",
-  critical: "bg-risk-critical/20 text-risk-critical",
+  default: "bg-neutral-200 text-neutral-800",
+  success: "bg-sage-200 text-sage-800",
+  warning: "bg-accent-200 text-accent-800",
+  danger: "bg-accent-300 text-accent-900",
+  critical: "bg-clay-surface text-clay-text",
+  night: "bg-[rgba(240,233,217,0.12)] text-sage-300",
 };
 
 /** Map RiskLevel enum values to badge variants. */
@@ -28,12 +39,16 @@ export const riskVariant: Record<RiskLevel, BadgeVariant> = {
   CRITICAL: "critical",
 };
 
-export default function Badge({ children, variant = "default", className = "" }: BadgeProps) {
+export default function Badge({
+  children,
+  variant = "default",
+  className = "",
+}: BadgeProps) {
   return (
     <span
       className={`
         inline-flex items-center rounded-full px-2.5 py-0.5
-        text-xs font-semibold
+        text-[11px] font-semibold tracking-[0.02em]
         ${variantStyles[variant]}
         ${className}
       `}
