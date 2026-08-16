@@ -10,26 +10,26 @@ import BrandMark from "@/components/brand/BrandMark";
 /**
  * Top navigation bar with responsive mobile menu.
  *
- * The bar adopts the night ground on the map and detect routes so the
- * chrome reads as one continuous operations surface, and the sand ground
- * everywhere else. Shows an "Admin" link only for authenticated officers.
+ * The bar adopts the night ground on the detect route so the chrome reads
+ * as operations tooling, and the sand ground everywhere else — including
+ * /map, whose basemap and panels are light. Shows an "Admin" link only for
+ * authenticated officers, and flags Alerts as not yet live.
  */
 
 const NAV_LINKS = [
-  { href: "/detect", label: "Detect" },
-  { href: "/map", label: "Map" },
-  { href: "/alerts", label: "Alerts" },
+  { href: "/detect", label: "Detect", comingSoon: false },
+  { href: "/map", label: "Map", comingSoon: false },
+  { href: "/alerts", label: "Alerts", comingSoon: true },
 ] as const;
 
 /** Routes that render on the ink ground and want matching chrome. */
-const NIGHT_ROUTES = ["/map", "/detect"] as const;
+const NIGHT_ROUTES = ["/detect"] as const;
 
 /** Short label shown beside the wordmark on operations routes. */
 const ROUTE_TAG: Record<string, string> = {
   "/map": "MAP",
   "/detect": "DETECT",
   "/admin": "OPS",
-  "/alerts": "ALERTS",
 };
 
 export default function Navbar() {
@@ -71,11 +71,8 @@ export default function Navbar() {
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo / brand */}
         <Link href="/" className="flex items-center gap-2.5">
-          <BrandMark
-            size={26}
-            ringColor={isNight ? "var(--night-panel)" : "var(--sand)"}
-          />
-          <span className="font-heading text-[17px] tracking-[-0.02em]">
+          <BrandMark size={26} />
+          <span className="font-heading text-[21px] tracking-[-0.025em] sm:text-[22px]">
             EleFind
           </span>
           {routeTag && (
@@ -93,10 +90,21 @@ export default function Navbar() {
 
         {/* Desktop links */}
         <ul className="hidden items-center gap-1 md:flex">
-          {NAV_LINKS.map(({ href, label }) => (
+          {NAV_LINKS.map(({ href, label, comingSoon }) => (
             <li key={href}>
               <Link href={href} className={linkClass(href)}>
                 {label}
+                {comingSoon && (
+                  <span
+                    className={`mono ml-1.5 rounded-full px-1.5 py-0.5 text-[9px] uppercase tracking-[0.04em] ${
+                      isNight
+                        ? "bg-[rgba(174,191,146,0.2)] text-sage-300"
+                        : "bg-sage-200 text-sage-800"
+                    }`}
+                  >
+                    Soon
+                  </span>
+                )}
               </Link>
             </li>
           ))}
@@ -175,7 +183,7 @@ export default function Navbar() {
           }`}
         >
           <ul className="flex flex-col gap-1 px-4 py-3">
-            {NAV_LINKS.map(({ href, label }) => (
+            {NAV_LINKS.map(({ href, label, comingSoon }) => (
               <li key={href}>
                 <Link
                   href={href}
@@ -183,6 +191,17 @@ export default function Navbar() {
                   className={`block ${linkClass(href)}`}
                 >
                   {label}
+                  {comingSoon && (
+                    <span
+                      className={`mono ml-1.5 rounded-full px-1.5 py-0.5 text-[9px] uppercase tracking-[0.04em] ${
+                        isNight
+                          ? "bg-[rgba(174,191,146,0.2)] text-sage-300"
+                          : "bg-sage-200 text-sage-800"
+                      }`}
+                    >
+                      Soon
+                    </span>
+                  )}
                 </Link>
               </li>
             ))}

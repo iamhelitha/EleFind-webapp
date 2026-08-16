@@ -1,7 +1,7 @@
 import React from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Lock } from "lucide-react";
-import SriLankaGlyph from "@/components/brand/SriLankaGlyph";
+import { ArrowRight, Lock, Rocket, ScanSearch } from "lucide-react";
 import pool from "@/lib/db";
 
 /**
@@ -11,34 +11,30 @@ import pool from "@/lib/db";
  *  1. Hero on the ink ground — research framing, not vanity counters
  *  2. The problem — human-elephant conflict in Sri Lanka
  *  3. Why EleFind — four capability cards
- *  4. Research evidence — the preliminary end-to-end validation
+ *  4. Model previews — concise links to the full model reports
  *  5. Explainability — detection beside Grad-CAM
  *  6. Community alerts band
  *  7. Honest limits — best results / manual review / scope
  */
 
-/* ── Static research figures ──────────────────────────────────────────
-   These are fixed validation results, not live counts. They are quoted
-   with their qualifiers so the page never reads as a field-accuracy
-   claim. Do not wire these to the database. */
 const HERO_FIGURES = [
   {
-    value: "84.3%",
-    caption: "mAP@0.5 on a 197-image validation set",
-    qualifier: "Research validation",
-    size: "text-[34px]",
+    value: "Survey image",
+    caption: "Upload a geotagged aerial photograph",
+    qualifier: "Browser based",
+    size: "text-[18px]",
   },
   {
-    value: "25 / 26",
-    caption: "elephants matched in a preliminary real-world check",
-    qualifier: "Preliminary",
-    size: "text-[34px]",
+    value: "AI detection",
+    caption: "Review boxes and confidence scores",
+    qualifier: "Human verified",
+    size: "text-[18px]",
   },
   {
-    value: "Image → Detection\n→ Map → Alert",
-    caption: "one integrated workflow",
-    qualifier: "≈3.2 s GPU · 14.4 s CPU",
-    size: "text-[20px] leading-[1.25]",
+    value: "Map + alert",
+    caption: "Place verified sightings on the shared map",
+    qualifier: "Conservation workflow",
+    size: "text-[18px]",
   },
 ] as const;
 
@@ -47,12 +43,6 @@ const CAPABILITIES = [
   { n: "02", tone: "accent", text: "Built specifically for aerial and drone imagery" },
   { n: "03", tone: "sage", text: "Converts geotagged detections into map locations" },
   { n: "04", tone: "sage", text: "Warns nearby households when a sighting is verified" },
-] as const;
-
-const VALIDATION_CHIPS = [
-  { value: "25", label: "correct detections" },
-  { value: "1", label: "false positive" },
-  { value: "1", label: "missed detection" },
 ] as const;
 
 const LIMITS = [
@@ -128,25 +118,22 @@ export default async function Home() {
     <div className="animate-fade-in">
       {/* ─── Hero ──────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-night-panel text-night-text">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(90% 70% at 78% 40%, rgba(122,138,94,.30), transparent 70%)",
-          }}
-        />
-        <div className="pointer-events-none absolute inset-y-0 right-8 hidden w-[500px] place-items-center opacity-95 lg:grid">
-          <SriLankaGlyph tone="night" className="h-[500px] w-full" />
+        <div className="absolute inset-0">
+          <Image
+            src="/images/research/hero-aerial.jpg"
+            alt="Aerial wildlife survey terrain"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center opacity-55"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(25,29,22,0.98)_0%,rgba(25,29,22,0.94)_38%,rgba(25,29,22,0.68)_68%,rgba(25,29,22,0.34)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(75%_90%_at_80%_35%,rgba(122,138,94,0.16),transparent_70%)]" />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
           <div className="max-w-[730px]">
-            <div className="inline-flex items-center gap-2 rounded-full bg-[rgba(240,233,217,0.10)] px-3.5 py-1.5 text-[11.5px] uppercase tracking-[0.06em] text-sage-300">
-              <span className="block h-1.5 w-1.5 rounded-full bg-accent-400" />
-              Research prototype · Dry Zone corridor, Sri Lanka
-            </div>
-
-            <h1 className="mt-6 font-heading text-[clamp(42px,7vw,74px)] leading-[0.98] tracking-[-0.03em] text-sand">
+            <h1 className="font-heading text-[clamp(42px,7vw,74px)] leading-[0.98] tracking-[-0.03em] text-sand">
               Find the herd
               <br />
               before the
@@ -173,6 +160,9 @@ export default async function Home() {
                 className="inline-flex items-center gap-2 rounded-full border border-[rgba(240,233,217,0.35)] px-6 py-3 text-[15px] font-semibold text-night-text transition-colors hover:bg-[rgba(240,233,217,0.1)]"
               >
                 Get alerts near me
+                <span className="mono rounded-full bg-[rgba(174,191,146,0.2)] px-1.5 py-0.5 text-[9px] uppercase tracking-[0.04em] text-sage-300">
+                  Soon
+                </span>
               </Link>
             </div>
 
@@ -276,65 +266,100 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── Research evidence ─────────────────────────────────────── */}
+      {/* ─── Model previews ───────────────────────────────────────── */}
       <section className="bg-sand px-4 py-14 sm:px-8">
-        <div className="mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-[1.1fr_1fr]">
-          <div>
-            <h6 className="eyebrow m-0 mb-3.5 text-accent">Research evidence</h6>
-            <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
-              Preliminary end-to-end validation
-            </h2>
-            <p className="mt-4.5 max-w-[50ch] text-[15px] leading-[1.65] text-[rgba(32,30,29,0.75)]">
-              In six geotagged drone images containing 26 human-annotated
-              elephants, EleFind produced 25 correct detections, one false
-              positive and one missed detection — confirming the complete
-              image-to-map workflow as a functional research prototype.
-            </p>
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {VALIDATION_CHIPS.map(({ value, label }) => (
-                <div
-                  key={label}
-                  className="rounded-[22px] bg-sand-surface px-[18px] py-3.5"
-                >
-                  <div className="mono text-[26px]">{value}</div>
-                  <div className="mt-0.5 text-[11.5px] text-[rgba(32,30,29,0.6)]">
-                    {label}
-                  </div>
-                </div>
-              ))}
-              <div className="max-w-[26ch] rounded-[22px] bg-sage-100 px-[18px] py-3.5">
-                <span className="inline-flex items-center rounded-full bg-sage-200 px-2.5 py-0.5 text-[11px] font-semibold text-sage-800">
-                  Preliminary
-                </span>
-                <p className="mt-2 text-[11.5px] leading-[1.45] text-sage-900">
-                  Sample too small to generalise — not a field-accuracy claim.
-                </p>
-              </div>
+        <div className="mx-auto max-w-7xl">
+          <div className="grid items-end gap-6 lg:grid-cols-[1fr_auto]">
+            <div>
+              <h6 className="eyebrow m-0 mb-3.5 text-accent">Detection models</h6>
+              <h2 className="m-0 max-w-[22ch] text-[clamp(28px,4vw,38px)] leading-[1.06]">
+                Two generations, documented in full.
+              </h2>
+              <p className="mt-4 max-w-[66ch] text-[14.5px] leading-[1.65] text-muted">
+                The landing page now keeps the results brief. Each model has a
+                dedicated report with its evaluation protocol, training figures,
+                comparison graphs, inference settings and known limitations.
+              </p>
             </div>
-
-            {/* Live totals — supporting detail, deliberately not the headline. */}
-            <dl className="mono mt-6 flex flex-wrap gap-x-7 gap-y-2 border-t border-divider pt-5 text-[12px] text-[rgba(32,30,29,0.6)]">
+            <dl className="mono flex flex-wrap gap-x-6 gap-y-2 text-[11px] text-muted">
               <div>
-                <dt className="inline">detections recorded </dt>
-                <dd className="inline text-[15px] text-ink">
-                  {live.detections}
-                </dd>
+                <dt className="inline">detections </dt>
+                <dd className="inline text-[14px] text-ink">{live.detections}</dd>
               </div>
               <div>
                 <dt className="inline">crossing zones </dt>
-                <dd className="inline text-[15px] text-ink">{live.zones}</dd>
-              </div>
-              <div>
-                <dt className="inline">mean confidence </dt>
-                <dd className="inline text-[15px] text-ink">
-                  {live.meanConfidence}
-                </dd>
+                <dd className="inline text-[14px] text-ink">{live.zones}</dd>
               </div>
             </dl>
           </div>
 
-          <AnnotatedFramePlaceholder />
+          <div className="mt-8 grid gap-4 lg:grid-cols-2">
+            <article className="rounded-[28px] bg-night-panel p-6 text-night-text sm:p-8">
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <div className="mono text-[10px] uppercase tracking-[0.12em] text-sage-400">
+                    Deployed research model
+                  </div>
+                  <h3 className="mt-2 text-[28px] text-sand">EleFind YOLO11</h3>
+                </div>
+                <ScanSearch className="h-7 w-7 text-accent-400" />
+              </div>
+              <p className="mt-4 max-w-[58ch] text-[13px] leading-[1.6] text-night-muted">
+                The original aerial detector, evaluated on a 50-image test set
+                and paired with tiled inference for small elephants in large
+                survey photographs.
+              </p>
+              <div className="mt-5 flex gap-5 border-y border-white/10 py-4">
+                <div>
+                  <div className="mono text-xl text-sand">84.3%</div>
+                  <div className="mt-1 text-[10.5px] text-night-muted">mAP@0.5</div>
+                </div>
+                <div>
+                  <div className="mono text-xl text-sand">50</div>
+                  <div className="mt-1 text-[10.5px] text-night-muted">test images</div>
+                </div>
+              </div>
+              <Link
+                href="/models/yolo11"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-accent-400 transition-colors hover:text-accent-300"
+              >
+                Read the YOLO11 report <ArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+
+            <article className="rounded-[28px] bg-sage-100 p-6 text-sage-900 sm:p-8">
+              <div className="flex items-start justify-between gap-5">
+                <div>
+                  <div className="mono text-[10px] uppercase tracking-[0.12em] text-accent-700">
+                    Evaluation complete · launch ready
+                  </div>
+                  <h3 className="mt-2 text-[28px]">EleFind YOLO26s</h3>
+                </div>
+                <Rocket className="h-7 w-7 text-accent-700" />
+              </div>
+              <p className="mt-4 max-w-[58ch] text-[13px] leading-[1.6] text-sage-900/70">
+                The next-generation detector, evaluated on 439 held-out
+                full-resolution images with point-based metrics and a direct
+                YOLO11s baseline comparison.
+              </p>
+              <div className="mt-5 flex gap-5 border-y border-sage-300/60 py-4">
+                <div>
+                  <div className="mono text-xl">0.9002</div>
+                  <div className="mt-1 text-[10.5px] text-sage-900/60">point AP</div>
+                </div>
+                <div>
+                  <div className="mono text-xl">439</div>
+                  <div className="mt-1 text-[10.5px] text-sage-900/60">test images</div>
+                </div>
+              </div>
+              <Link
+                href="/models/yolo26"
+                className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-accent-700 transition-colors hover:text-accent"
+              >
+                Read the YOLO26 report <ArrowRight className="h-4 w-4" />
+              </Link>
+            </article>
+          </div>
         </div>
       </section>
 
@@ -354,22 +379,28 @@ export default async function Home() {
               </p>
             </div>
             <div className="grid gap-3.5 sm:grid-cols-2">
-              <div className="relative aspect-square overflow-hidden rounded-[24px] bg-gradient-to-br from-[#7f8464] to-[#5c6349]">
-                <span className="absolute left-[26%] top-[32%] w-[22%] rounded-[4px] border-2 border-accent-400 pb-[18.3%]" />
-                <span className="absolute left-[56%] top-[54%] w-[18%] rounded-[4px] border-2 border-accent-400 pb-[15%]" />
+              <div className="relative aspect-[3/2] overflow-hidden rounded-[24px] bg-[#5c6349]">
+                <Image
+                  src="/images/research/detection-output.jpg"
+                  alt="EleFind detection output with bounding boxes around two elephants"
+                  fill
+                  sizes="(min-width: 640px) 30vw, 100vw"
+                  className="object-cover"
+                />
                 <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
-                  detection
+                  Detection output
                 </span>
               </div>
-              <div
-                className="relative aspect-square overflow-hidden rounded-[24px]"
-                style={{
-                  background:
-                    "radial-gradient(22% 22% at 35% 42%, #ffd6a0, rgba(214,127,72,.65) 45%, transparent 72%), radial-gradient(18% 18% at 64% 62%, #ffc6a5, rgba(214,127,72,.5) 45%, transparent 72%), linear-gradient(120deg, #3d472b, #272e1b)",
-                }}
-              >
+              <div className="relative aspect-[3/2] overflow-hidden rounded-[24px] bg-[#272e1b]">
+                <Image
+                  src="/images/research/gradcam.jpg"
+                  alt="Grad-CAM heatmap highlighting the regions used for elephant detection"
+                  fill
+                  sizes="(min-width: 640px) 30vw, 100vw"
+                  className="object-cover"
+                />
                 <span className="mono absolute bottom-2.5 left-2.5 rounded-full bg-black/40 px-2 py-0.5 text-[10px] text-white/80">
-                  Grad-CAM · placeholder
+                  Grad-CAM activation
                 </span>
               </div>
             </div>
@@ -377,12 +408,15 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── Community alerts ──────────────────────────────────────── */}
+     {/* ─── Community alerts ──────────────────────────────────────── */}
       <section className="bg-accent-100 px-4 py-12 sm:px-8">
         <div className="mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[1.1fr_1fr]">
           <div>
-            <h6 className="eyebrow m-0 mb-3.5 text-accent-800">
+            <h6 className="eyebrow m-0 mb-3.5 flex items-center gap-2 text-accent-800">
               Community alerts
+              <span className="mono rounded-full bg-sage-200 px-1.5 py-0.5 text-[9px] uppercase tracking-[0.04em] text-sage-800">
+                Coming soon
+              </span>
             </h6>
             <h2 className="m-0 max-w-[22ch] text-[clamp(26px,3.5vw,34px)] leading-[1.08]">
               Live near the corridor? Ask to be warned.
@@ -454,55 +488,6 @@ export default async function Home() {
           ))}
         </div>
       </section>
-    </div>
-  );
-}
-
-/**
- * Stand-in for the annotated survey frame.
- *
- * Replace the gradient block with the real annotated output once a
- * representative frame is cleared for publication.
- */
-function AnnotatedFramePlaceholder() {
-  const boxes = [
-    { left: "16%", top: "30%", width: "12%", color: "#f6a06b" },
-    { left: "38%", top: "52%", width: "11%", color: "#f6a06b" },
-    { left: "57%", top: "24%", width: "10%", color: "#f6a06b" },
-    { left: "73%", top: "58%", width: "9%", color: "#ffc6a5" },
-  ];
-
-  return (
-    <div
-      className="relative aspect-[4/3] overflow-hidden rounded-[28px]"
-      style={{
-        background: "linear-gradient(120deg, #8b8f6c, #5c6349 50%, #777c5c)",
-        filter: "saturate(0.6) contrast(0.85) brightness(1.1) opacity(0.94)",
-      }}
-    >
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            "repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 1px, transparent 1px 20%), repeating-linear-gradient(0deg, rgba(255,255,255,.045) 0 1px, transparent 1px 25%)",
-        }}
-      />
-      {boxes.map(({ left, top, width, color }) => (
-        <span
-          key={`${left}-${top}`}
-          className="absolute rounded-[4px] border-2"
-          style={{
-            left,
-            top,
-            width,
-            paddingBottom: `calc(${width} / 1.2)`,
-            borderColor: color,
-          }}
-        />
-      ))}
-      <span className="mono absolute bottom-3 left-3.5 rounded-full bg-black/40 px-2.5 py-1 text-[10.5px] text-white/85">
-        placeholder — drop the real annotated survey frame here
-      </span>
     </div>
   );
 }

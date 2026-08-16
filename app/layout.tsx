@@ -31,7 +31,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"),
   title: "EleFind — AI-Powered Elephant Detection",
   description:
-    "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
+    "Detect elephants in aerial and drone imagery using EleFind YOLO11 and YOLO26s, then visualise their locations on an interactive conservation map.",
   keywords: ["elephant detection", "conservation", "AI", "YOLO", "SAHI", "Sri Lanka", "wildlife"],
   icons: {
     icon: "/icon.png",
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "EleFind — AI-Powered Elephant Detection",
     description:
-      "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
+      "Detect elephants in aerial and drone imagery using EleFind YOLO11 and YOLO26s, then visualise their locations on an interactive conservation map.",
     type: "website",
     images: [
       {
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "EleFind — AI-Powered Elephant Detection",
     description:
-      "Detect elephants in aerial and drone imagery using YOLOv11 + SAHI, and visualise their locations on an interactive map for conservation.",
+      "Detect elephants in aerial and drone imagery using EleFind YOLO11 and YOLO26s, then visualise their locations on an interactive conservation map.",
     images: ["/twitter-image.png"],
   },
 };

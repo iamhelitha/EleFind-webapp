@@ -13,10 +13,10 @@ export default function Footer() {
   return (
     <footer className="bg-night-panel text-night-text">
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="grid gap-8 md:grid-cols-[1.4fr_1fr_1fr]">
+        <div className="grid gap-8 md:grid-cols-[1.4fr_0.8fr_0.8fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <BrandMark size={28} ringColor="var(--night-panel)" />
+              <BrandMark size={28} />
               <span className="font-heading text-[18px]">EleFind</span>
             </div>
             <p className="mt-3 max-w-[46ch] text-[13px] leading-relaxed text-[rgba(240,233,217,0.6)]">
@@ -50,6 +50,17 @@ export default function Footer() {
               </li>
               <li>
                 <Link
+                  href="/alerts"
+                  className="text-[rgba(240,233,217,0.75)] transition-colors hover:text-accent-400"
+                >
+                  Alerts{" "}
+                  <span className="mono text-[10px] uppercase tracking-[0.04em] text-sage-300">
+                    (soon)
+                  </span>
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/login"
                   className="text-[rgba(240,233,217,0.75)] transition-colors hover:text-accent-400"
                 >
@@ -61,20 +72,32 @@ export default function Footer() {
 
           <div>
             <h6 className="eyebrow m-0 text-[rgba(240,233,217,0.5)]">
-              In an emergency
+              Model reports
             </h6>
-            <p className="mono mt-3 text-[13.5px] leading-relaxed text-[rgba(240,233,217,0.75)]">
-              DWC hotline
-              <br />
-              <span className="text-[22px] text-accent-400">1919</span>
-            </p>
+            <ul className="mt-3 flex flex-col gap-2 text-[13.5px]">
+              <li>
+                <Link
+                  href="/models/yolo11"
+                  className="text-[rgba(240,233,217,0.75)] transition-colors hover:text-accent-400"
+                >
+                  EleFind YOLO11
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/models/yolo26"
+                  className="text-[rgba(240,233,217,0.75)] transition-colors hover:text-accent-400"
+                >
+                  EleFind YOLO26s
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
 
         <div className="mt-9 flex flex-col items-start gap-3 border-t border-[rgba(240,233,217,0.12)] pt-6 sm:flex-row sm:items-center sm:justify-between">
           <p className="mono m-0 text-[11px] text-[rgba(240,233,217,0.45)]">
-            &copy; {new Date().getFullYear()} EleFind · BSc Computer Science
-            Dissertation · University of Bedfordshire
+            &copy; {new Date().getFullYear()} EleFind · Helitha Guruge
           </p>
           <div className="flex items-center gap-4">
             <a
@@ -84,7 +107,7 @@ export default function Footer() {
               className="flex items-center gap-1.5 text-[13px] text-[rgba(240,233,217,0.7)] transition-colors hover:text-accent-400"
             >
               <Github className="h-4 w-4" />
-              iamhelitha
+              GitHub
             </a>
             <a
               href="https://linkedin.com/in/iamhelitha"
@@ -93,7 +116,7 @@ export default function Footer() {
               className="flex items-center gap-1.5 text-[13px] text-[rgba(240,233,217,0.7)] transition-colors hover:text-accent-400"
             >
               <Linkedin className="h-4 w-4" />
-              iamhelitha
+              LinkedIn
             </a>
           </div>
         </div>
