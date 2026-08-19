@@ -1,6 +1,14 @@
 import { redirect } from "next/navigation";
 import { getServerAuthUser } from "@/lib/server-auth";
 import AdminSidebarNav from "./_components/AdminSidebarNav";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Administration",
+  description: "Restricted EleFind administration interface.",
+  path: "/admin",
+  index: false,
+});
 
 export default async function AdminLayout({
   children,

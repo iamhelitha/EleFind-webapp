@@ -1,6 +1,20 @@
 import MapPageContent from "@/components/map/MapPageContent";
 import { MOCK_DETECTIONS, MOCK_CROSSINGS } from "@/lib/mock-data";
 import type { MapDetection, CrossingZone } from "@/types";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Elephant Sightings and Crossing-Zone Map",
+  description:
+    "Explore verified elephant detections and community-recorded crossing zones on EleFind's interactive conservation map.",
+  path: "/map",
+  keywords: [
+    "elephant sightings map",
+    "elephant crossing zones",
+    "wildlife conservation map",
+    "Sri Lanka elephant map",
+  ],
+});
 
 /**
  * Unified map page combining detections and crossing zones.
