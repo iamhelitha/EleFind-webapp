@@ -1,11 +1,66 @@
-import type { Metadata } from "next";
 import ModelReport from "@/components/models/ModelReport";
+import JsonLd from "@/components/seo/JsonLd";
+import { absoluteUrl, createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "EleFind YOLO11 — Model Evaluation",
-  description:
-    "Detailed training, evaluation, comparison, and limitation report for the EleFind YOLO11 aerial elephant detector.",
-};
+const pageDescription =
+  "Explore EleFind YOLO11 training curves, aerial elephant detection metrics, SAHI inference settings, limitations, and a direct YOLO26s comparison.";
+
+export const metadata = createPageMetadata({
+  title: "YOLO11 Aerial Elephant Detection Model Report",
+  description: pageDescription,
+  path: "/models/yolo11",
+  image: "/models/yolo11/opengraph-image",
+  imageAlt: "EleFind YOLO11 aerial elephant detection model report",
+  keywords: [
+    "YOLO11 elephant detection",
+    "aerial elephant detection model",
+    "YOLO11 model metrics",
+    "SAHI elephant detection",
+  ],
+});
+
+const reportJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: "EleFind YOLO11 Aerial Elephant Detection Model Report",
+    description: pageDescription,
+    url: absoluteUrl("/models/yolo11"),
+    image: absoluteUrl("/models/yolo11/opengraph-image"),
+    inLanguage: "en",
+    author: { "@type": "Person", name: "Helitha Guruge" },
+    about: {
+      "@type": "SoftwareApplication",
+      name: "EleFind YOLO11",
+      applicationCategory: "ScienceApplication",
+      operatingSystem: "Any",
+      additionalProperty: [
+        { "@type": "PropertyValue", name: "mAP@0.5", value: "84.3%" },
+        { "@type": "PropertyValue", name: "Precision", value: "53.2%" },
+        { "@type": "PropertyValue", name: "Recall", value: "49.1%" },
+        { "@type": "PropertyValue", name: "F1 score", value: "51.0%" },
+      ],
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "EleFind",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "YOLO11 model report",
+        item: absoluteUrl("/models/yolo11"),
+      },
+    ],
+  },
+];
 
 const comparisonImage = {
   src: "/images/yolo26/scoring-comparison.png",
@@ -17,7 +72,9 @@ const comparisonImage = {
 
 export default function Yolo11ModelPage() {
   return (
-    <ModelReport
+    <>
+      <JsonLd data={reportJsonLd} />
+      <ModelReport
       version="YOLO11"
       status="Deployed research model"
       title="EleFind YOLO11"
@@ -104,6 +161,7 @@ export default function Yolo11ModelPage() {
         "Side-angle imagery is outside the overhead-view training objective.",
       ]}
       otherModel={{ href: "/models/yolo26", label: "Read the YOLO26 report" }}
-    />
+      />
+    </>
   );
 }

@@ -1,11 +1,66 @@
-import type { Metadata } from "next";
 import ModelReport from "@/components/models/ModelReport";
+import JsonLd from "@/components/seo/JsonLd";
+import { absoluteUrl, createPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "EleFind YOLO26s — Model Evaluation",
-  description:
-    "Detailed held-out evaluation, comparison, inference configuration, and limitation report for the launch-ready EleFind YOLO26s detector.",
-};
+const pageDescription =
+  "Review EleFind YOLO26s held-out aerial elephant detection metrics, tiled-inference settings, altitude-aware analysis, limitations, and YOLO11s comparison.";
+
+export const metadata = createPageMetadata({
+  title: "YOLO26s Aerial Elephant Detection Model Report",
+  description: pageDescription,
+  path: "/models/yolo26",
+  image: "/models/yolo26/opengraph-image",
+  imageAlt: "EleFind YOLO26s launch-ready aerial elephant detection report",
+  keywords: [
+    "YOLO26 elephant detection",
+    "aerial elephant detection model",
+    "YOLO26s model metrics",
+    "point AP elephant detection",
+  ],
+});
+
+const reportJsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: "EleFind YOLO26s Aerial Elephant Detection Model Report",
+    description: pageDescription,
+    url: absoluteUrl("/models/yolo26"),
+    image: absoluteUrl("/models/yolo26/opengraph-image"),
+    inLanguage: "en",
+    author: { "@type": "Person", name: "Helitha Guruge" },
+    about: {
+      "@type": "SoftwareApplication",
+      name: "EleFind YOLO26s",
+      applicationCategory: "ScienceApplication",
+      operatingSystem: "Any",
+      additionalProperty: [
+        { "@type": "PropertyValue", name: "Point AP at 2.25 m", value: "0.9002" },
+        { "@type": "PropertyValue", name: "Best F1", value: "0.8896" },
+        { "@type": "PropertyValue", name: "Precision", value: "0.9168" },
+        { "@type": "PropertyValue", name: "Recall", value: "0.8640" },
+      ],
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "EleFind",
+        item: absoluteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "YOLO26s model report",
+        item: absoluteUrl("/models/yolo26"),
+      },
+    ],
+  },
+];
 
 const comparisonImage = {
   src: "/images/yolo26/scoring-comparison.png",
@@ -17,7 +72,9 @@ const comparisonImage = {
 
 export default function Yolo26ModelPage() {
   return (
-    <ModelReport
+    <>
+      <JsonLd data={reportJsonLd} />
+      <ModelReport
       version="YOLO26s"
       status="Evaluation complete · launch ready"
       title="EleFind YOLO26s"
@@ -110,6 +167,7 @@ export default function Yolo26ModelPage() {
         "Outputs require human verification before census or enforcement use.",
       ]}
       otherModel={{ href: "/models/yolo11", label: "Read the YOLO11 report" }}
-    />
+      />
+    </>
   );
 }

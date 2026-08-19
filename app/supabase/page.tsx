@@ -1,4 +1,12 @@
 import { createClient } from "@/utils/supabase/server";
+import { createPageMetadata } from "@/lib/seo";
+
+export const metadata = createPageMetadata({
+  title: "Internal Data Preview",
+  description: "Internal EleFind data preview.",
+  path: "/supabase",
+  index: false,
+});
 
 type TodoRow = {
   id: string;
